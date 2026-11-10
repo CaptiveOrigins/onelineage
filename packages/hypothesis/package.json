@@ -1,0 +1,19 @@
+{
+  "name": "@captiveorigins/onelineage-hypothesis",
+  "version": "0.0.0",
+  "private": true,
+  "description": "OneLineage hypothesis engine: scores competing family trees against observed shared DNA by simulating each tree, and reports odds, never a single answer.",
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "sideEffects": false,
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean --target node22",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": { "@captiveorigins/onelineage-simulate": "workspace:*" }
+}

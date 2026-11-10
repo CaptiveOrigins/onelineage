@@ -33,6 +33,12 @@ importers:
 
   packages/core: {}
 
+  packages/hypothesis:
+    dependencies:
+      '@captiveorigins/onelineage-simulate':
+        specifier: workspace:*
+        version: link:../simulate
+
   packages/library:
     dependencies:
       '@captiveorigins/onelineage-core':
