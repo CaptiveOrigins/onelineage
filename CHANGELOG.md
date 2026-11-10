@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Visual phasing chart, 2026-11-10: `phaseThreeSiblings` assigns every stretch of three siblings' chromosomes to a grandparent. It finds the best path between agreeing with the observed sibling states and having few switches. Labels are relative per chromosome: side 1 or 2, grandparent a or b. With simulated siblings and no parents, it matched the true grandparents at 93.7% of sampled positions.
+
 - Sibling phasing building blocks, 2026-11-10: `ibdStates` reads, window by window, whether two full siblings share neither, one or both copies of each chromosome. `siblingCrossovers` attributes a crossover to one sibling when every pair with that sibling changes state there and no other pair does. With three simulated siblings and no parents, states were right over 90% of the time, and over 85% of attributed crossovers fell within 5 cM of a true one. Drawing the grandparent chart from them is the next step.
 
 - Genetic maps and chip errors, 2026-11-10: `parsePlinkMap` reads published maps in PLINK `.map` format, interpolating within each chromosome and refusing malformed or out-of-order files. `compareKits` gains genotyping-error tolerance: an opposite homozygote with at most one other break within 50 markers on each side is treated as a likely chip error. With a 0.3% error rate, a parent and child stay whole, a relative's total stays within 10%, and a stranger stays at zero. No map is bundled yet; see docs/decisions.md.

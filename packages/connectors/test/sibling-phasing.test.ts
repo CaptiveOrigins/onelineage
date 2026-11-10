@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { fileURLToPath } from 'node:url'
-import { ibdStates, siblingCrossovers, type IbdStretch } from '@captiveorigins/onelineage-core'
+import { ibdStates, phaseThreeSiblings, siblingCrossovers, type IbdStretch } from '@captiveorigins/onelineage-core'
 import { loadTermsRegister } from '../../core/src/node.js'
 import { AlleleBook, child, founderGenome, genotypesOf, makePanel, Rng, writeRaw, type Genome } from '@captiveorigins/onelineage-simulate'
 import { importRawDna } from '../src/index.js'
@@ -44,6 +44,36 @@ describe('visual phasing building blocks, with three siblings and no parents', a
     expect(found.length).toBeGreaterThan(20)
     const near = found.filter((c) => trueCrossovers(sibs[c.sibling]!).some((t) => t.chromosome === c.chromosome && Math.abs(t.atCm - c.atCm) <= 5))
     expect(near.length / found.length).toBeGreaterThan(0.85)
+  })
+
+  it('the phasing chart matches the true grandparents along the genome (labels are relative, so up to swapping)', () => {
+    const pieces = phaseThreeSiblings(states, ['A', 'B', 'C'])
+    let right = 0
+    let total = 0
+    for (let chr = 1; chr <= 22; chr++) {
+      // Score each of the 8 ways to name the unnamed labels, and keep the best per chromosome.
+      let best = 0
+      let count = 0
+      for (let sym = 0; sym < 8; sym++) {
+        let ok = 0
+        count = 0
+        for (let cm = 3; cm < 60; cm += 1) for (const sib of ['A', 'B', 'C']) for (const side of [1, 2] as const) {
+          const piece = pieces.find((p) => p.sibling === sib && p.chromosome === String(chr) && p.side === side && p.startCm <= cm && cm <= p.endCm)
+          if (!piece) continue
+          count++
+          const parentIdx = (sym & 1 ? 3 - side : side) - 1 // which real parent this side is
+          const label = labelAt(sibs[sib]![parentIdx]!, chr, cm)
+          const gp = label.endsWith(':0') ? 'a' : 'b'
+          const flip = parentIdx === 0 ? sym & 2 : sym & 4
+          if ((flip ? (gp === 'a' ? 'b' : 'a') : gp) === piece.grandparent) ok++
+        }
+        best = Math.max(best, ok)
+      }
+      right += best
+      total += count
+    }
+    expect(total).toBeGreaterThan(1000)
+    expect(right / total).toBeGreaterThan(0.85)
   })
 
   it('needs three or more siblings', () => {

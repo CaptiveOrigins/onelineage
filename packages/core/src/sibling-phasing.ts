@@ -102,3 +102,69 @@ export function siblingCrossovers(states: ReadonlyMap<string, readonly IbdStretc
   }
   return out.sort((p, q) => Number(p.chromosome) - Number(q.chromosome) || p.atCm - q.atCm)
 }
+
+export type PhasedPiece = { sibling: string; chromosome: string; startCm: number; endCm: number; /** One of the two parents' sides, unnamed. */ side: 1 | 2; /** One of that parent's two parents, unnamed. */ grandparent: 'a' | 'b' }
+
+/**
+ * The visual phasing chart for three siblings: for every stretch of every chromosome, which grandparent
+ * each sibling's two copies came from. Labels are relative. "Side 1" and "side 2" are the two parents, and
+ * "a" and "b" are each parent's two parents, unnamed until a placed match or a parent kit says which is which.
+ *
+ * Method: each stretch between state changes has 64 possible assignments (each sibling's two copies, each
+ * from grandparent a or b). Each assignment predicts the three pair states. A best path along the chromosome
+ * balances disagreement with the observed states against the number of switches, since every switch is a
+ * crossover. The first stretch is fixed to break the symmetry of the unnamed labels.
+ */
+export function phaseThreeSiblings(states: ReadonlyMap<string, readonly IbdStretch[]>, siblings: readonly [string, string, string], switchCost = 1.5): PhasedPiece[] {
+  const [A, B, C] = siblings
+  const key = (x: string, y: string) => (x < y ? `${x}|${y}` : `${y}|${x}`)
+  const pairs: [number, number, string][] = [[0, 1, key(A, B)], [0, 2, key(A, C)], [1, 2, key(B, C)]]
+  for (const [, , k] of pairs) if (!states.has(k)) throw new Error(`no IBD states for ${k.replace('|', ' and ')}`)
+  const bits = (s: number) => [0, 1, 2].map((i) => [(s >> (2 * i)) & 1, (s >> (2 * i + 1)) & 1] as const) // per sibling: [side1, side2]
+  const predict = (s: number, x: number, y: number) => { const b = bits(s); return (b[x]![0] === b[y]![0] ? 1 : 0) + (b[x]![1] === b[y]![1] ? 1 : 0) }
+  const flips = (s: number, t: number) => { let d = s ^ t, n = 0; while (d) { n += d & 1; d >>= 1 } return n }
+  const out: PhasedPiece[] = []
+  const chromosomes = [...new Set([...states.values()].flatMap((st) => st.map((x) => x.chromosome)))]
+  for (const chr of chromosomes) {
+    const lists = pairs.map(([, , k]) => (states.get(k) ?? []).filter((x) => x.chromosome === chr))
+    const cuts = [...new Set(lists.flatMap((l) => l.flatMap((x) => [x.startCm, x.endCm])))].sort((p, q) => p - q)
+    const intervals: { start: number; end: number; obs: (IbdState | undefined)[] }[] = []
+    for (let i = 0; i + 1 < cuts.length; i++) {
+      const start = cuts[i]!, end = cuts[i + 1]!, mid = (start + end) / 2
+      if (end - start < 1e-9) continue
+      intervals.push({ start, end, obs: lists.map((l) => l.find((x) => x.startCm <= mid && mid <= x.endCm)?.state) })
+    }
+    if (!intervals.length) continue
+    const emit = (s: number, obs: (IbdState | undefined)[]) => pairs.reduce((t, [x, y], i) => t + (obs[i] === undefined ? 0 : Math.abs(predict(s, x, y) - (obs[i] as number))), 0)
+    let cost = Array.from({ length: 64 }, (_, s) => ((s & 3) === 0 ? emit(s, intervals[0]!.obs) : Infinity))
+    const back: number[][] = []
+    for (let i = 1; i < intervals.length; i++) {
+      const next: number[] = new Array(64).fill(Infinity)
+      const from: number[] = new Array(64).fill(0)
+      for (let t = 0; t < 64; t++) {
+        for (let s = 0; s < 64; s++) {
+          const c = cost[s]! + switchCost * flips(s, t)
+          if (c < next[t]!) { next[t] = c; from[t] = s }
+        }
+        next[t]! += emit(t, intervals[i]!.obs)
+      }
+      back.push(from)
+      cost = next
+    }
+    let s = cost.indexOf(Math.min(...cost))
+    const path = [s]
+    for (let i = back.length - 1; i >= 0; i--) { s = back[i]![s]!; path.unshift(s) }
+    path.forEach((st, i) => {
+      const b = bits(st)
+      siblings.forEach((sib, j) => {
+        for (const side of [1, 2] as const) {
+          const gp = b[j]![side - 1] ? 'b' : 'a'
+          const last = [...out].reverse().find((p) => p.sibling === sib && p.chromosome === chr && p.side === side)
+          if (last && last.grandparent === gp && Math.abs(last.endCm - intervals[i]!.start) < 1e-9) last.endCm = intervals[i]!.end
+          else out.push({ sibling: sib, chromosome: chr, startCm: intervals[i]!.start, endCm: intervals[i]!.end, side, grandparent: gp })
+        }
+      })
+    })
+  }
+  return out
+}
