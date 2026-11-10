@@ -5,4 +5,6 @@ build/
 dist/
 node_modules/
 .build/
-.gradle/
+coverage/
+# Generated planted-family exports (regenerate with pnpm simulate)
+fixtures/generated/
