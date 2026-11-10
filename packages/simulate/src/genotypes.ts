@@ -50,7 +50,7 @@ export class AlleleBook {
 }
 
 /** A person's genotype at every marker, with a small rate of no-calls, as real chips have. */
-export function genotypesOf(genome: Genome, panel: Panel, book: AlleleBook, seed: number, noCallRate = 0.003): Genotypes {
+export function genotypesOf(genome: Genome, panel: Panel, book: AlleleBook, seed: number, noCallRate = 0.003, errorRate = 0): Genotypes {
   const rng = new Rng(seed)
   const out: Genotypes = new Array(panel.markers.length)
   const labelAt = (hap: Genome[0], m: Marker) => {
@@ -62,6 +62,8 @@ export function genotypesOf(genome: Genome, panel: Panel, book: AlleleBook, seed
     const a = book.alleles(labelAt(genome[0], m))[i] ? m.alt : m.ref
     const b = book.alleles(labelAt(genome[1], m))[i] ? m.alt : m.ref
     out[i] = [a, b].sort().join('')
+    // A chip error: the call comes out as a homozygote of a random one of the two alleles.
+    if (errorRate > 0 && rng.chance(errorRate)) { const x = rng.chance(0.5) ? m.ref : m.alt; out[i] = x + x }
   })
   return out
 }

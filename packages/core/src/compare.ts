@@ -21,6 +21,13 @@ export type CompareOptions = {
   map?: GeneticMap
   /** Chromosomes compared. Autosomes by default; X is compared separately because it's inherited differently. */
   chromosomes?: readonly string[]
+  /**
+   * Genotyping-error tolerance: the window, in markers on each side, used to judge an opposite homozygote.
+   * A break is treated as a likely chip error when the window holds no more than `maxBreaksNearby` other
+   * breaks. Unrelated people have breaks every few dozen markers, so their windows are crowded. 0 turns it off.
+   */
+  errorTolerance?: number
+  maxBreaksNearby?: number
 }
 
 export type DnaSegment = { chromosome: string; startBp: number; endBp: number; startCm: number; endCm: number; cm: number; markers: number }
@@ -67,9 +74,17 @@ export function compareKits(a: KitCalls, b: KitCalls, opts: CompareOptions = {})
         segments.push({ chromosome: chr, startBp: s.pos, endBp: e.pos, startCm, endCm, cm: endCm - startCm, markers: n })
       }
     }
+    const tol = opts.errorTolerance ?? 0
+    const isBreak = shared.map((m) => oppositeHomozygous(m.a, m.b))
+    const allowed = opts.maxBreaksNearby ?? 1
+    const lone = (i: number) => {
+      if (tol <= 0 || i < tol || i + tol >= shared.length) return false
+      let near = 0
+      for (let k = 1; k <= tol; k++) near += (isBreak[i - k] ? 1 : 0) + (isBreak[i + k] ? 1 : 0)
+      return near <= allowed
+    }
     for (let i = 0; i < shared.length; i++) {
-      const m = shared[i]!
-      if (oppositeHomozygous(m.a, m.b)) { close(i); start = i + 1 }
+      if (isBreak[i] && !lone(i)) { close(i); start = i + 1 }
     }
     close(shared.length)
   }

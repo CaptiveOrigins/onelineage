@@ -35,10 +35,23 @@ describe('comparing two raw kits on this Mac', async () => {
     const t = truth(tester, relative)
     const c = compareKits(kt, kr)
     expect(Math.abs(c.totalCm - t)).toBeLessThan(Math.max(30, t * 0.1))
+    // Tolerance must not inflate a real relative's total either.
+    expect(Math.abs(compareKits(kt, kr, { errorTolerance: 50 }).totalCm - t)).toBeLessThan(Math.max(30, t * 0.1))
   })
 
   it('an unrelated person matches nothing', () => {
     expect(compareKits(kt, ks).totalCm).toBe(0)
+  })
+
+  it('with chip errors, tolerance keeps a parent and child whole; without it they fragment', async () => {
+    const noisy = async (p: Person) => (await importRawDna({ file: `${p.id}-e.txt`, bytes: enc.encode(writeRaw('ancestry', panel, genotypesOf(family.genomes.get(p.id)!, panel, book, 77 + Number(p.id.slice(1)), 0.003, 0.003))), terms })).calls
+    const [nt, nm] = await Promise.all([noisy(tester), noisy(mother)])
+    const strict = compareKits(nt, nm)
+    const tolerant = compareKits(nt, nm, { errorTolerance: 50 })
+    expect(strict.segments.length).toBeGreaterThan(30)
+    expect(tolerant.segments.length).toBeLessThanOrEqual(24)
+    expect(tolerant.totalCm).toBeGreaterThan(truth(tester, mother) * 0.97)
+    expect(compareKits(nt, await kitOf(stranger), { errorTolerance: 50 }).totalCm).toBe(0)
   })
 
   it('triangulation finds the stretches all three share', () => {
