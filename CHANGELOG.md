@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Segment painting, 2026-11-10: `assignSides` puts each shared segment on the mother's or father's side, using the parents' own comparisons with the same match. `paint` lays reference relatives' segments onto ancestor lines (paths like "MP", the mother's father), and reports overlapping claims from unrelated lines as conflicts, without resolving them. Checked against the simulation's true inheritance.
+
 - Library and backups, 2026-11-10: `@captiveorigins/onelineage-library` adds the library folder, exports stored frozen (read-only, with a manifest, never replaced), and the hash-chained decisions log, which refuses to go on after an edit. It also backs up to any number of destinations with a test-restore, encrypting with AES-256-GCM on this Mac for cloud-synced folders. Restores go only into a new folder. Pruning happens only after the newest copy checks out. The two-backup rule allows a deliberate step down. A SQLite cache can be rebuilt and compared by digest (S11).
 
 - Kit-to-kit comparison, 2026-11-10: `compareKits` finds shared segments between two raw kits on this Mac. It ends a stretch at each opposite homozygote, and keeps stretches of at least 7 cM and 300 markers. `triangulate` finds stretches three kits share. Centimorgans use an approximate 1 cM per Mb map, and every result names the map it used. Tested against simulated truth: parent and child, a relative within 10%, a stranger at zero.
