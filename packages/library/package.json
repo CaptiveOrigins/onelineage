@@ -1,0 +1,19 @@
+{
+  "name": "@captiveorigins/onelineage-library",
+  "version": "0.0.0",
+  "private": true,
+  "description": "OneLineage library: the user's folder of frozen exports and an append-only decisions log, a cache that can always be rebuilt, and checked backups with the two-backup rule.",
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "sideEffects": false,
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean --target node22",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": { "@captiveorigins/onelineage-core": "workspace:*" }
+}

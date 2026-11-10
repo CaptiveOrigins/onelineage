@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Library and backups, 2026-11-10: `@captiveorigins/onelineage-library` adds the library folder, exports stored frozen (read-only, with a manifest, never replaced), and the hash-chained decisions log, which refuses to go on after an edit. It also backs up to any number of destinations with a test-restore, encrypting with AES-256-GCM on this Mac for cloud-synced folders. Restores go only into a new folder. Pruning happens only after the newest copy checks out. The two-backup rule allows a deliberate step down. A SQLite cache can be rebuilt and compared by digest (S11).
+
 - Kit-to-kit comparison, 2026-11-10: `compareKits` finds shared segments between two raw kits on this Mac. It ends a stretch at each opposite homozygote, and keeps stretches of at least 7 cM and 300 markers. `triangulate` finds stretches three kits share. Centimorgans use an approximate 1 cM per Mb map, and every result names the map it used. Tested against simulated truth: parent and child, a relative within 10%, a stranger at zero.
 
 - Raw DNA importer, 2026-11-10: reads the AncestryDNA, 23andMe, MyHeritage, FamilyTreeDNA and Living DNA raw-data layouts. It records the test's stated details (chip or array version, build, date, markers, no-calls) and refuses unknown layouts and bad rows. The terms register's `site_export` is checked first. The simulator now makes up genotypes and raw files for planted families. The layouts follow the companies' public descriptions; a real downloaded file hasn't been checked against them yet.
