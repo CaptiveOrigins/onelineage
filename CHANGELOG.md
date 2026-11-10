@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Raw DNA importer, 2026-11-10: reads the AncestryDNA, 23andMe, MyHeritage, FamilyTreeDNA and Living DNA raw-data layouts. It records the test's stated details (chip or array version, build, date, markers, no-calls) and refuses unknown layouts and bad rows. The terms register's `site_export` is checked first. The simulator now makes up genotypes and raw files for planted families. The layouts follow the companies' public descriptions; a real downloaded file hasn't been checked against them yet.
+
 - First importer, 2026-11-10: `@captiveorigins/onelineage-connectors` reads Genealogy Assistant-shaped match lists and shared-match files, checking these before keeping anything:
   - the terms register (real Ancestry match data stays refused while its terms are unclear)
   - columns and values, with the whole import refused on any problem
