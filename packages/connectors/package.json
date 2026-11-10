@@ -1,0 +1,24 @@
+{
+  "name": "@captiveorigins/onelineage-connectors",
+  "version": "0.0.0",
+  "private": true,
+  "description": "OneLineage connectors: importers for the files people export themselves, each checked against the terms register, with loud schema checks and provenance on every record.",
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "sideEffects": false,
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean --target node22",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@captiveorigins/onelineage-core": "workspace:*"
+  },
+  "devDependencies": {
+    "@captiveorigins/onelineage-simulate": "workspace:*"
+  }
+}
