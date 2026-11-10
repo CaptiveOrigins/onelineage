@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Sibling phasing building blocks, 2026-11-10: `ibdStates` reads, window by window, whether two full siblings share neither, one or both copies of each chromosome. `siblingCrossovers` attributes a crossover to one sibling when every pair with that sibling changes state there and no other pair does. With three simulated siblings and no parents, states were right over 90% of the time, and over 85% of attributed crossovers fell within 5 cM of a true one. Drawing the grandparent chart from them is the next step.
+
 - Genetic maps and chip errors, 2026-11-10: `parsePlinkMap` reads published maps in PLINK `.map` format, interpolating within each chromosome and refusing malformed or out-of-order files. `compareKits` gains genotyping-error tolerance: an opposite homozygote with at most one other break within 50 markers on each side is treated as a likely chip error. With a 0.3% error rate, a parent and child stay whole, a relative's total stays within 10%, and a stranger stays at zero. No map is bundled yet; see docs/decisions.md.
 
 - Hypothesis engine, 2026-11-10: `@captiveorigins/onelineage-hypothesis` scores competing family trees by simulating inheritance through each one, and reports odds with each match's contribution (ADR 0008). On a planted misattributed father it gave the biological father 98.5%, his brother 1.5% and the recorded father under 0.1%. It tells half from full siblings at 1,750 and 2,650 cM.

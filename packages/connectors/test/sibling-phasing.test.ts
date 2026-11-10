@@ -1,0 +1,52 @@
+import { describe, expect, it } from 'vitest'
+import { fileURLToPath } from 'node:url'
+import { ibdStates, siblingCrossovers, type IbdStretch } from '@captiveorigins/onelineage-core'
+import { loadTermsRegister } from '../../core/src/node.js'
+import { AlleleBook, child, founderGenome, genotypesOf, makePanel, Rng, writeRaw, type Genome } from '@captiveorigins/onelineage-simulate'
+import { importRawDna } from '../src/index.js'
+
+const terms = loadTermsRegister(fileURLToPath(new URL('../../../terms', import.meta.url)))
+const panel = makePanel(13, 50)
+const book = new AlleleBook(panel, 13)
+const rng = new Rng(13)
+const father = founderGenome('father')
+const mother = founderGenome('mother')
+const sibs: Record<string, Genome> = { A: child(father, mother, rng), B: child(father, mother, rng), C: child(father, mother, rng) }
+const enc = new TextEncoder()
+const kitOf = async (name: string, seed: number) => (await importRawDna({ file: `${name}.txt`, bytes: enc.encode(writeRaw('ftdna', panel, genotypesOf(sibs[name]!, panel, book, seed))), terms })).calls
+
+const labelAt = (hap: Genome[0], chr: number, cm: number) => hap[chr - 1]!.find((s) => s.start <= cm && cm < s.end)!.label
+const truthState = (x: Genome, y: Genome, chr: number, cm: number) => (labelAt(x[0], chr, cm) === labelAt(y[0], chr, cm) ? 1 : 0) + (labelAt(x[1], chr, cm) === labelAt(y[1], chr, cm) ? 1 : 0)
+const trueCrossovers = (g: Genome) => g.flatMap((hap) => hap.flatMap((segs, c) => segs.slice(1).map((s) => ({ chromosome: String(c + 1), atCm: s.start }))))
+const stateAt = (st: readonly IbdStretch[], chr: number, cm: number) => st.find((s) => s.chromosome === String(chr) && s.startCm <= cm && cm <= s.endCm)?.state
+
+describe('visual phasing building blocks, with three siblings and no parents', async () => {
+  const [ka, kb, kc] = await Promise.all([kitOf('A', 1), kitOf('B', 2), kitOf('C', 3)])
+  const states = new Map([['A|B', ibdStates(ka, kb)], ['A|C', ibdStates(ka, kc)], ['B|C', ibdStates(kb, kc)]])
+
+  it('reads how much two siblings share (none, one or both copies) correctly along the genome', () => {
+    let right = 0
+    let total = 0
+    for (const [pair, st] of states) {
+      const [x, y] = pair.split('|') as [string, string]
+      for (let chr = 1; chr <= 22; chr++) for (let cm = 2; cm < 60; cm += 1) {
+        const got = stateAt(st, chr, cm)
+        if (got === undefined) continue
+        total++
+        if (got === truthState(sibs[x]!, sibs[y]!, chr, cm)) right++
+      }
+    }
+    expect(right / total).toBeGreaterThan(0.9)
+  })
+
+  it('attributes crossovers to the right sibling, close to where they really happened', () => {
+    const found = siblingCrossovers(states, ['A', 'B', 'C'])
+    expect(found.length).toBeGreaterThan(20)
+    const near = found.filter((c) => trueCrossovers(sibs[c.sibling]!).some((t) => t.chromosome === c.chromosome && Math.abs(t.atCm - c.atCm) <= 5))
+    expect(near.length / found.length).toBeGreaterThan(0.85)
+  })
+
+  it('needs three or more siblings', () => {
+    expect(() => siblingCrossovers(new Map(), ['A', 'B'])).toThrow(/three or more/)
+  })
+})
