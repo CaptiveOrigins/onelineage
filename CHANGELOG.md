@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Match grouping, 2026-11-10: `@captiveorigins/onelineage-analysis` groups a kit's matches from the DNA alone, reading the importer's records and nothing from trees (ADR 0006). It ports the earlier Python method, with its own Leiden implementation (refinement phase included) and a seeded generator, so the same files and seeds give the same groups:
+  - a network of matches from 20 to 400 cM, linked by shared-match cM
+  - consensus groups over 30 Leiden runs
+  - two-way splits per side, using only matches with 2 or more segments
+  - seeded placement that leaves a match "unplaced" unless one line scores at least twice the next
+
+  On planted families, the groups keep the sides and the grandparent lines apart, keep the misattributed father's real line apart from the other great-grandparent line, gather the intermarried community into one group, and leave unrelated small matches out. Compared with the Python method on ten planted families at two densities, the adjusted Rand index is 1.0 for the groups, 0.94 to 1.0 for the side splits, and placement is identical. It hasn't been run on real data. 62 tests.
 - Raw-file extras, 2026-11-10, on made-up families only:
   - `phaseWithParent` splits a child's kit into each parent's half.
   - `rebuildFromDescendants` partly rebuilds someone who never tested. It's refused for real data without a recorded consent, and the owner's rule is pending (N126).
