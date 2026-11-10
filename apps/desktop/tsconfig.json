@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "noEmit": true,
+    "declaration": false,
+    "types": ["node", "vite/client"],
+    "paths": {
+      "@captiveorigins/onelineage-core": ["../../packages/core/src/index.ts"],
+      "@captiveorigins/onelineage-connectors": ["../../packages/connectors/src/index.ts"],
+      "@captiveorigins/onelineage-library": ["../../packages/library/src/index.ts"],
+      "@captiveorigins/onelineage-simulate": ["../../packages/simulate/src/index.ts"]
+    }
+  },
+  "include": ["src", "host", "test", "vite.config.ts", "vitest.config.ts", "tsup.host.config.ts", "aliases.ts"]
+}

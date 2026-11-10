@@ -1,0 +1,19 @@
+[package]
+name = "onelineage"
+version = "0.0.0"
+description = "OneLineage for Mac"
+authors = ["Captive Origins"]
+license-file = "../../../LICENSE"
+edition = "2021"
+
+[lib]
+name = "onelineage_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+serde_json = "1"

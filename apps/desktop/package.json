@@ -1,0 +1,42 @@
+{
+  "name": "onelineage-desktop",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "OneLineage for Mac: a library folder of your DNA match data, the use-policy and backup setup, and kits, matches, a theory page and backups on a made-up demo family.",
+  "license": "SEE LICENSE IN LICENSE",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && pnpm build:host",
+    "build:host": "tsup --config tsup.host.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "tauri": "tauri",
+    "app:dev": "tauri dev",
+    "app:build": "tauri build"
+  },
+  "dependencies": {
+    "@captiveorigins/onelineage-connectors": "workspace:*",
+    "@captiveorigins/onelineage-core": "workspace:*",
+    "@captiveorigins/onelineage-library": "workspace:*",
+    "@captiveorigins/onelineage-simulate": "workspace:*",
+    "@captiveorigins/onepedigree-core": "0.1.0-alpha.18",
+    "@captiveorigins/onepedigree-react": "0.1.0-alpha.18",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2",
+    "lucide-react": "1.65.0",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.0",
+    "vite": "^7",
+    "vitest": "^4.1.12"
+  }
+}

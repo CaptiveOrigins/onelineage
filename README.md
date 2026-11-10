@@ -13,6 +13,8 @@ DNA-first genetic genealogy for Mac. OneLineage groups your DNA matches before y
 - sibling phasing, half-kits and rebuilt relatives (made-up data only)
 - the hypothesis engine with odds (ADR 0008)
 - the library with checked, encrypted backups
+- one universal ID per person, and proposed cross-service links
+- OneLineage for Mac, v0: runs on a made-up demo family. It's been built and opened locally, not released, and needs Node 22.13 or later on the Mac for now (ADR 0007).
 
 155 tests pass locally. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
 
@@ -42,6 +44,12 @@ A pnpm workspace: Node 22 or later, TypeScript, Vitest.
 ## Commands
 
 ```bash
+# The Mac app in development (needs Rust; Node 22.13 or later must be on this Mac while the app runs)
+pnpm --filter onelineage-desktop app:dev
+
+# The same screens in a browser, without the Mac shell
+pnpm --filter onelineage-desktop dev
+
 # A made-up family with planted answers, written as Genealogy Assistant-style CSVs plus truth.json
 pnpm --filter @captiveorigins/onelineage-simulate simulate --seed 1 --out ../../fixtures/generated/planted-1
 ```
