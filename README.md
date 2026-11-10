@@ -2,7 +2,7 @@
 
 DNA-first genetic genealogy for Mac. OneLineage groups your DNA matches before your family tree can bias them, then gives odds on each possible family tree. It runs on your own Mac, with no servers and no account.
 
-**Status:** just started, and nothing is built yet. This repo holds the design so far: the architecture decision records in `docs/architecture/`, the use policy, and the terms register, which is still being filled in. There's no code yet, so nothing has been tested.
+**Status:** just started. Built so far: the design (`docs/architecture/`), the use policy, and the terms register (`terms/`, read 2026-11-10), with the code that enforces it. Its 13 tests pass locally. Nothing reads real data yet. The register's verdicts are a careful reading of public pages. They aren't legal advice, and a legal review is still to come.
 
 ## What it will do
 
@@ -20,7 +20,12 @@ See [USE-POLICY.md](USE-POLICY.md). It's for family research, your own or someon
 
 ## Build
 
-Not yet. The project will be a pnpm workspace (Node 22 or later, TypeScript).
+```bash
+pnpm install
+pnpm test
+```
+
+A pnpm workspace: Node 22 or later, TypeScript, Vitest.
 
 ## License
 

@@ -1,7 +1,13 @@
 # Terms register
 
-One file per service. Each records what that service's terms allow OneLineage to do, with the date read, the sources, and quotes of the clauses. See [ADR 0004](../docs/architecture/0004-terms-register.md).
+One file per service. Each file records what that service's terms let OneLineage do: the date the terms were read, the sources, and the clauses quoted. See [ADR 0004](../docs/architecture/0004-terms-register.md).
 
-A capability is used only if its verdict is `allowed`. A verdict of `unclear` means no.
+The front-matter block at the top of each file is what the code reads. A connector can use a capability only if its verdict is exactly `allowed`. `not-allowed`, `unclear`, `n/a` and a missing entry all refuse. Unclear means no.
 
-The register is being filled in, so for now every service is treated as `unclear` for every capability.
+First read on 2026-11-10. Reread a site's terms when it changes them, and before every release.
+
+## What the first read means
+
+- **Automated page visits:** not allowed on any DNA service read. That means Ancestry, MyHeritage, 23andMe, GEDmatch and FamilyTreeDNA. Anything automated waits for a partnership.
+- **Downloading your own raw DNA:** allowed by Ancestry, MyHeritage, 23andMe and FamilyTreeDNA. That's OneLineage's clean data path.
+- **Match lists:** no service's terms mention exporting your match list. The `site_export` verdicts cover raw DNA downloads only. Whether OneLineage may import match lists that users export themselves is an open question for the owner.

@@ -21,6 +21,8 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12(@types/node@24.19.2)(vite@8.3.7(@types/node@24.19.2)(esbuild@0.27.7))
 
+  packages/core: {}
+
 packages:
 
   '@esbuild/aix-ppc64@0.27.7':
