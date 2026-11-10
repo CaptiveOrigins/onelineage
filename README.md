@@ -2,7 +2,19 @@
 
 DNA-first genetic genealogy for Mac. OneLineage groups your DNA matches before your family tree can bias them, then gives odds on each possible family tree. It runs on your own Mac, with no servers and no account.
 
-**Status:** just started. Built so far: the design (`docs/architecture/`), the use policy, the terms register (`terms/`, read 2026-11-10) with the code that enforces it, a simulator of made-up test families with planted answers, the first importer (which refuses real Ancestry match data while its terms are unclear), a raw DNA importer for five companies' layouts, and match grouping from the DNA alone (ADR 0006), which so far has only been run on made-up families. 117 tests pass locally. The raw layouts haven't yet been checked against a real downloaded file. Nothing reads real data yet. The register's verdicts are a careful reading of public pages. They aren't legal advice, and a legal review is still to come.
+**Status:** early, and only tested on made-up families; nothing reads real data yet. Built so far:
+
+- the design (`docs/architecture/`) and the use policy
+- the terms register (`terms/`, read 2026-11-10), and the code that enforces it
+- a simulator of made-up families with planted answers
+- importers for Genealogy Assistant-style match lists (real Ancestry data is refused while its terms are unclear), and for raw DNA in five companies' layouts
+- match grouping from the DNA alone (ADR 0006)
+- kit-to-kit comparison, triangulation and segment painting
+- sibling phasing, half-kits and rebuilt relatives (made-up data only)
+- the hypothesis engine with odds (ADR 0008)
+- the library with checked, encrypted backups
+
+155 tests pass locally. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
 
 ## What it will do
 
