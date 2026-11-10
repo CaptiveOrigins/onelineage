@@ -33,6 +33,7 @@ export type CompareOptions = {
 export type DnaSegment = { chromosome: string; startBp: number; endBp: number; startCm: number; endCm: number; cm: number; markers: number }
 export type Comparison = { segments: DnaSegment[]; totalCm: number; longestCm: number; comparedMarkers: number; map: string }
 
+const FULL_CALL = /^[ACGTDI]{2}$/
 const AUTOSOMES = Array.from({ length: 22 }, (_, i) => String(i + 1))
 
 function oppositeHomozygous(a: string, b: string): boolean {
@@ -57,7 +58,8 @@ export function compareKits(a: KitCalls, b: KitCalls, opts: CompareOptions = {})
     ca.rsid.forEach((r, i) => {
       const callB = other.get(r)
       const callA = ca.call[i] as string
-      if (callB === undefined || callA === '--' || callB === '--') return
+      // Only full two-letter calls are compared; anything else (no-calls, half-known calls like "A?") is skipped.
+      if (callB === undefined || !FULL_CALL.test(callA) || !FULL_CALL.test(callB)) return
       shared.push({ pos: Number(ca.position[i]), a: callA, b: callB })
     })
     shared.sort((x, y) => x.pos - y.pos)
@@ -96,6 +98,29 @@ export function compareKits(a: KitCalls, b: KitCalls, opts: CompareOptions = {})
  * Triangulation: where A–B, A–C and B–C segments all overlap, the three very likely share that stretch
  * from one ancestor. Returns the overlapping stretches.
  */
+/**
+ * Compare a set of half-kits (each one inherited copy of a person, for example each child's half from an
+ * untested parent) with a kit, and merge the results. A stretch counts if any half matches there.
+ */
+export function compareHalves(halves: readonly KitCalls[], kit: KitCalls, opts: CompareOptions = {}): Comparison {
+  const parts = halves.map((h) => compareKits(h, kit, opts))
+  const byChr = new Map<string, DnaSegment[]>()
+  for (const p of parts) for (const s of p.segments) (byChr.get(s.chromosome) ?? byChr.set(s.chromosome, []).get(s.chromosome)!).push({ ...s })
+  const segments: DnaSegment[] = []
+  for (const [, list] of byChr) {
+    list.sort((a, b) => a.startCm - b.startCm)
+    for (const s of list) {
+      const last = segments[segments.length - 1]
+      if (last && last.chromosome === s.chromosome && s.startCm <= last.endCm) {
+        if (s.endCm > last.endCm) { last.endCm = s.endCm; last.endBp = s.endBp; last.cm = last.endCm - last.startCm }
+        last.markers = Math.max(last.markers, s.markers)
+      } else segments.push(s)
+    }
+  }
+  const totalCm = segments.reduce((t, s) => t + s.cm, 0)
+  return { segments, totalCm, longestCm: segments.reduce((m, s) => Math.max(m, s.cm), 0), comparedMarkers: parts.reduce((t, p) => t + p.comparedMarkers, 0), map: parts[0]?.map ?? (opts.map ?? ONE_CM_PER_MB).name }
+}
+
 export function triangulate(ab: readonly DnaSegment[], ac: readonly DnaSegment[], bc: readonly DnaSegment[], minCm = 7): DnaSegment[] {
   const out: DnaSegment[] = []
   for (const x of ab) for (const y of ac) for (const z of bc) {

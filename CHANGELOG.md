@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Raw-file extras, 2026-11-10, on made-up families only:
+  - `phaseWithParent` splits a child's kit into each parent's half.
+  - `rebuildFromDescendants` partly rebuilds someone who never tested. It's refused for real data without a recorded consent, and the owner's rule is pending (N126).
+  - `compareHalves` compares such people through their inherited halves.
+  - `xPathPossible` applies the X-DNA inheritance rule.
+  - `compareKits` now skips half-known calls, which could otherwise hide breaks.
+
 - Visual phasing chart, 2026-11-10: `phaseThreeSiblings` assigns every stretch of three siblings' chromosomes to a grandparent. It finds the best path between agreeing with the observed sibling states and having few switches. Labels are relative per chromosome: side 1 or 2, grandparent a or b. With simulated siblings and no parents, it matched the true grandparents at 93.7% of sampled positions.
 
 - Sibling phasing building blocks, 2026-11-10: `ibdStates` reads, window by window, whether two full siblings share neither, one or both copies of each chromosome. `siblingCrossovers` attributes a crossover to one sibling when every pair with that sibling changes state there and no other pair does. With three simulated siblings and no parents, states were right over 90% of the time, and over 85% of attributed crossovers fell within 5 cM of a true one. Drawing the grandparent chart from them is the next step.
