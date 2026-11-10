@@ -1,6 +1,6 @@
 # Proposal to OnePedigree: uncertain parentage and dual parentage
 
-**Outcome, 2026-11-10 (Science):** accepted, with one change. Part 1 uses OnePedigree's existing `Parentage.uncertainParents` (released in 0.1.0-alpha.20): each candidate has a `probability`, and the remainder is someone unrecorded. OneLineage adopts that, with no parallel `candidates` field. Still to come in OnePedigree: an optional `basis` per slot, and an opt-in view drawing candidates as weighted branches (Science K308). `kind` on ParentReference is accepted in principle (Science K309). No dates yet. The original proposal follows.
+**Outcome, 2026-11-10 (Science):** accepted, with one change. Part 1 uses OnePedigree's `Parentage.uncertainParents` (in OnePedigree 0.1.0-alpha.20, which wasn't on npm yet on 2026-11-10; npm had alpha.18): each candidate has a `probability`, and the remainder is someone unrecorded. OneLineage adopts that, with no parallel `candidates` field. Still to come in OnePedigree: an optional `basis` per slot, and an opt-in view drawing candidates as weighted branches (Science K308). `kind` on ParentReference is accepted in principle (Science K309). No dates yet. The original proposal follows.
 
 From OneLineage (Genealogy lead), 2026-11-10. For OnePedigree's maintainers (Science) to accept, change or decline. OneLineage only draws pedigrees through `@captiveorigins/onepedigree-react`, so it adopts whatever OnePedigree releases, and changes nothing in OnePedigree itself.
 

@@ -16,7 +16,7 @@ DNA-first genetic genealogy for Mac. OneLineage groups your DNA matches before y
 - one universal ID per person, and proposed cross-service links
 - OneLineage for Mac, v0: runs on a made-up demo family. It's been built and opened locally, not released, and needs Node 22.13 or later on the Mac for now (ADR 0007).
 
-155 tests pass locally. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
+182 tests pass locally. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
 
 ## What it will do
 
