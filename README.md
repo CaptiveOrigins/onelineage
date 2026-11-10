@@ -2,7 +2,7 @@
 
 DNA-first genetic genealogy for Mac. OneLineage groups your DNA matches before your family tree can bias them, then gives odds on each possible family tree. It runs on your own Mac, with no servers and no account.
 
-**Status:** just started. Built so far: the design (`docs/architecture/`), the use policy, and the terms register (`terms/`, read 2026-11-10), with the code that enforces it. Its 13 tests pass locally. Nothing reads real data yet. The register's verdicts are a careful reading of public pages. They aren't legal advice, and a legal review is still to come.
+**Status:** just started. Built so far: the design (`docs/architecture/`), the use policy, the terms register (`terms/`, read 2026-11-10) with the code that enforces it, and a simulator of made-up test families with planted answers. 26 tests pass locally. Nothing reads real data yet. The register's verdicts are a careful reading of public pages. They aren't legal advice, and a legal review is still to come.
 
 ## What it will do
 
@@ -26,6 +26,15 @@ pnpm test
 ```
 
 A pnpm workspace: Node 22 or later, TypeScript, Vitest.
+
+## Commands
+
+```bash
+# A made-up family with planted answers, written as Genealogy Assistant-style CSVs plus truth.json
+pnpm --filter @captiveorigins/onelineage-simulate simulate --seed 1 --out ../../fixtures/generated/planted-1
+```
+
+The simulator's limits: crossovers have no interference, matches below 8 cM and segments below 7 cM are dropped, and there's no Timber-style weighting. Weighted and unweighted cM are therefore equal, and segment lengths come from a rounded genetic map. Every name and ID is invented.
 
 ## License
 

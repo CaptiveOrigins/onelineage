@@ -1,0 +1,20 @@
+{
+  "name": "@captiveorigins/onelineage-simulate",
+  "version": "0.0.0",
+  "private": true,
+  "description": "OneLineage planted test families: simulated families with known answers (a misattributed father, a half-sibling line, double cousins, an intermarried community), exported in the same shapes real tools produce.",
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "sideEffects": false,
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": { "onelineage-simulate": "./dist/cli.js" },
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "tsup src/index.ts src/cli.ts --format esm --dts --clean --target node22",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "simulate": "tsup src/index.ts src/cli.ts --format esm --dts --clean --target node22 && node dist/cli.js"
+  }
+}
