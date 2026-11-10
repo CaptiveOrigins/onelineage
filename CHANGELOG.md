@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- One person across services, 2026-11-10:
+  - `newPersonId` gives every person a permanent random universal ID.
+  - `IdentityRegistry` holds confirmed links, finds anchors (people confirmed on two or more services), and refuses a second link until the first is undone.
+  - `proposeLinks` suggests same-person pairs from cM to shared family kits and names, with evidence, and drops any pair with a close runner-up. On a planted family with a made-up second service: 100% of proposals right, 59% of the shared people found. Links are never made without a person's confirmation.
+
 - Match grouping, 2026-11-10: `@captiveorigins/onelineage-analysis` groups a kit's matches from the DNA alone, reading the importer's records and nothing from trees (ADR 0006). It ports the earlier Python method, with its own Leiden implementation (refinement phase included) and a seeded generator, so the same files and seeds give the same groups:
   - a network of matches from 20 to 400 cM, linked by shared-match cM
   - consensus groups over 30 Leiden runs
