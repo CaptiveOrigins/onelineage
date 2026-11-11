@@ -172,6 +172,7 @@ export type HostApi = {
   extensionStartRun: { params: { kit: string; site: string; origin: string; maxPages?: number }; result: ExtensionView }
   extensionStopRun: { params: Record<string, never>; result: ExtensionView }
   /** Apply a label batch the owner approved, one page at a time. */
+  proposeLabels: { params: { kit: string }; result: { kit: string; labels: LabelInstruction[] } }
   extensionApplyLabels: { params: { kit: string; site: string; origin: string; labels: LabelInstruction[]; approved: boolean }; result: ExtensionView }
   /** The app's privacy switch, shared with the extension's side panel. */
   setPrivacy: { params: { on: boolean }; result: ExtensionView }

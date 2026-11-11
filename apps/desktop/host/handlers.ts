@@ -600,8 +600,20 @@ export function createHost(opts: {
       return extensionView()
     },
 
+    /** A proposed label batch from the kit's DNA groups: neutral group IDs, prefixed "OL" so they're clearly the app's. */
+    async proposeLabels({ kit }) {
+      const k = (await load(current())).kits.find((x) => x.result.kit === kit)
+      if (!k) throw new HostError('That kit isn’t in this library.')
+      const labels = groupsOf(k).matches.map((m) => ({ match: m.match, label: `OL ${m.group}` }))
+      return { kit, labels }
+    },
+
     async extensionApplyLabels({ kit, site, origin, labels, approved }) {
-      extension.applyLabels({ kit, site, origin, labels: Array.isArray(labels) ? labels : [], approved })
+      const list = Array.isArray(labels) ? labels : []
+      extension.applyLabels({ kit, site, origin, labels: list, approved })
+      // An applied batch is the owner's decision, so it's recorded with what it covered (counts and labels, no names).
+      const home = state().home
+      if (home) await appendDecision(decisionsPath(current()), { by: BY, kind: 'label-batch', data: { kit, site, origin, count: list.length, labels: [...new Set(list.map((l) => l.label))].sort() }, at: now().toISOString() })
       return extensionView()
     },
 

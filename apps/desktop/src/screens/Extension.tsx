@@ -195,6 +195,7 @@ export function ExtensionScreen({ view, onView, kits }: { view: ExtensionView | 
             </button>
           )}
         </div>
+        <LabelBatch kit={kit} origin={origin.trim()} connected={view.connected} running={running} onView={onView} onError={setError} />
         {view.run && (
           <p role="status">
             {running ? `Running: ${view.run.pages} of at most ${view.run.maxPages} pages.` : `Last run: ${view.run.reason ?? 'stopped'}, ${view.run.pages} pages. ${view.run.detail ?? ''}`}
@@ -241,5 +242,46 @@ export function ExtensionScreen({ view, onView, kits }: { view: ExtensionView | 
         )}
       </section>
     </>
+  )
+}
+
+/**
+ * A label batch for the mock site: proposed from the kit's DNA groups, reviewed here, and applied only after
+ * the person ticks that they've reviewed it. Real services are refused by the terms register.
+ */
+function LabelBatch(props: { kit: string; origin: string; connected: boolean; running: boolean; onView: (v: ExtensionView) => void; onError: (m: string | null) => void }) {
+  const [batch, setBatch] = useState<{ kit: string; labels: { match: string; label: string }[] } | null>(null)
+  const [reviewed, setReviewed] = useState(false)
+  const id = useId()
+  const counts = new Map<string, number>()
+  for (const l of batch?.labels ?? []) counts.set(l.label, (counts.get(l.label) ?? 0) + 1)
+  return (
+    <section aria-labelledby={`${id}-h`} style={{ marginTop: 16 }}>
+      <h3 id={`${id}-h`}>Label batch (mock site only)</h3>
+      <p>Labels come from the kit’s DNA groups and start with “OL”, so they’re clearly the app’s. Nothing is written until you review the batch and apply it.</p>
+      <div className="ol-row">
+        <button type="button" disabled={!props.kit} onClick={() => { setReviewed(false); props.onError(null); call('proposeLabels', { kit: props.kit }).then(setBatch, (e: Error) => props.onError(e.message)) }}>
+          Propose a batch
+        </button>
+      </div>
+      {batch && (
+        <>
+          <p role="status">{batch.labels.length} matches, {counts.size} labels: {[...counts].map(([l, n]) => `${l} (${n})`).join(', ')}.</p>
+          <label htmlFor={`${id}-ok`}>
+            <input id={`${id}-ok`} type="checkbox" checked={reviewed} onChange={(e) => setReviewed(e.target.checked)} /> I’ve reviewed this batch
+          </label>
+          <div className="ol-row">
+            <button
+              type="button"
+              className="ol-primary"
+              disabled={!reviewed || !props.connected || props.running || batch.labels.length === 0}
+              onClick={() => call('extensionApplyLabels', { kit: batch.kit, site: MOCK_SITE, origin: props.origin, labels: batch.labels, approved: true }).then((v) => { props.onView(v); setBatch(null); setReviewed(false) }, (e: Error) => props.onError(e.message))}
+            >
+              Apply to the mock site
+            </button>
+          </div>
+        </>
+      )}
+    </section>
   )
 }

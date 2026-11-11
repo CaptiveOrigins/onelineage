@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Label batches, 2026-11-10: the Extension screen proposes a label batch from the kit's DNA groups ("OL G1" and so on), shows how many matches each label covers, and applies it to the mock site only after you tick that you've reviewed it. An applied batch is recorded in the decisions log, with counts and labels and no names. Real services are refused by the terms register.
+
 - What's due, 2026-11-10: `dueItems` applies the owner's schedule (a match-list check every 13 weeks, a full rerun yearly), and `dueMessage` writes the counts-only text for a notification or email, with no names, cM or DNA details. The app shows a quiet "Due" line and never blocks work. Native Mac notifications and the email aren't built yet.
 
 - DNA groups in the app, 2026-11-10: the host groups each kit's matches with the analysis package (ADR 0006), once per load. The extension's side-panel summary now gives the match's side, its neutral group ID and split, and how sure the grouping is (Strong, Moderate or Weak, from run agreement), or why it isn't grouped. A `groups` request lists group sizes and sides. Summaries carry no names.

@@ -135,6 +135,21 @@ describe('DNA groups in the app', () => {
   })
 })
 
+describe('label batches', () => {
+  it('are proposed from DNA groups with an OL prefix, and nothing is applied or recorded without a connected extension', async () => {
+    const { root, h } = setup()
+    await h.chooseLibrary({ path: join(root, 'lib') })
+    const s = await h.openDemo({ seed: 1 })
+    const { kits } = await h.kits({})
+    const batch = await h.proposeLabels({ kit: kits[0]!.kit })
+    expect(batch.labels.length).toBeGreaterThan(5)
+    expect(batch.labels.every((l) => /^OL G\d+$/.test(l.label))).toBe(true)
+    const before = (await readDecisions(decisionsPath(s.current!.path))).length
+    await expect(h.extensionApplyLabels({ kit: kits[0]!.kit, site: 'mocksite', origin: 'http://127.0.0.1:8787', labels: batch.labels, approved: true })).rejects.toThrow()
+    expect((await readDecisions(decisionsPath(s.current!.path))).length).toBe(before)
+  })
+})
+
 describe('what is due', () => {
   it('lists a check and a rerun once enough time has passed, with a counts-only message', async () => {
     const { root, h } = setup()
