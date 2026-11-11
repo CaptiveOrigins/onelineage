@@ -1,4 +1,4 @@
-import { Dna, Eye, EyeOff, GitBranch, HardDrive, Network, Settings, Table2, Users } from 'lucide-react'
+import { AlignLeft, Dna, Eye, EyeOff, GitBranch, HardDrive, Network, Settings, Table2, Users } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { BackupState, KitsResult, Status, TheoryResult } from '../host/protocol'
 import { call } from './api'
@@ -8,13 +8,15 @@ import { FirstLaunch } from './screens/FirstLaunch'
 import { KitsScreen } from './screens/Kits'
 import { MatchesScreen } from './screens/Matches'
 import { TheoryScreen } from './screens/Theory'
+import { ChromosomesScreen } from './screens/Chromosomes'
 import { createStandIns, sessionSalt } from './standins'
 import { ErrorBox, Icon, NamesContext } from './ui'
 
-type Screen = 'kits' | 'matches' | 'theory' | 'network' | 'backups'
+type Screen = 'kits' | 'matches' | 'chromosomes' | 'theory' | 'network' | 'backups'
 const SCREENS: { id: Screen; label: string; icon: typeof Users }[] = [
   { id: 'kits', label: 'Kits', icon: Users },
   { id: 'matches', label: 'Matches', icon: Table2 },
+  { id: 'chromosomes', label: 'Chromosomes', icon: AlignLeft },
   { id: 'theory', label: 'Theory', icon: GitBranch },
   { id: 'network', label: 'DNA network', icon: Network },
   { id: 'backups', label: 'Backups', icon: HardDrive },
@@ -171,7 +173,7 @@ function Main(props: {
 
   useEffect(() => heading.current?.focus(), [])
   useEffect(() => {
-    if (hasKits && (screen === 'kits' || screen === 'matches')) call('kits').then(setKits, (e: Error) => setError(e.message))
+    if (hasKits && (screen === 'kits' || screen === 'matches' || screen === 'chromosomes')) call('kits').then(setKits, (e: Error) => setError(e.message))
     if (hasKits && screen === 'theory') call('theory').then(setTheory, (e: Error) => setError(e.message))
   }, [screen, hasKits])
 
@@ -214,6 +216,7 @@ function Main(props: {
       )}
       {needsKits && hasKits && screen === 'kits' && (kits ? <KitsScreen data={kits} /> : !error && <p>Reading kits…</p>)}
       {needsKits && hasKits && screen === 'matches' && (kits ? <MatchesScreen kits={kits.kits} /> : !error && <p>Reading kits…</p>)}
+      {needsKits && hasKits && screen === 'chromosomes' && (kits ? <ChromosomesScreen kits={kits.kits} /> : !error && <p>Reading kits…</p>)}
       {needsKits && hasKits && screen === 'theory' && (theory === undefined ? !error && <p>Reading…</p> : <TheoryScreen theory={theory} onTheory={setTheory} dark={props.dark} />)}    </main>
   )
 }

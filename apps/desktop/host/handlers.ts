@@ -305,7 +305,7 @@ export function createHost(opts: { stateDir: string; keys?: KeyStore; now?: () =
           const a = data.kits[i]!
           const b = data.kits[j]!
           if (!a.raw || !b.raw) continue
-          const c = compareKits(a.raw.calls, b.raw.calls, { map: ONE_CM_PER_MB })
+          const c = compareKits(a.raw.calls, b.raw.calls, { map: ONE_CM_PER_MB, errorTolerance: 50 })
           comparisons.push({ a: a.result.kit, b: b.result.kit, totalCm: Math.round(c.totalCm), segments: c.segments.length, longestCm: Math.round(c.longestCm), map: c.map })
         }
       return { kits, comparisons }
@@ -335,6 +335,25 @@ export function createHost(opts: { stateDir: string; keys?: KeyStore; now?: () =
       if (!p?.child || !p.recordedFather || !p.biologicalFather) return null
       const question = { child: p.child, recordedFather: p.recordedFather, biologicalFather: p.biologicalFather }
       return { blind: false, kit: tester.result.kit, name: tester.name, recorded: data.ownTree.doc, question, theory: withCandidateFathers(data.ownTree.doc, question, truth.persons) }
+    },
+
+    async segments({ a, b }) {
+      const data = await load(current())
+      const ka = data.kits.find((k) => k.result.kit === a)
+      const kb = data.kits.find((k) => k.result.kit === b)
+      if (!ka || !kb) throw new HostError('That kit isn’t in this library.')
+      if (!ka.raw || !kb.raw) throw new HostError('Both kits need a raw DNA file to be compared.')
+      const c = compareKits(ka.raw.calls, kb.raw.calls, { map: ONE_CM_PER_MB, errorTolerance: 50 })
+      const chromosomes = [...ka.raw.calls.keys()].filter((chr) => /^\d+$/.test(chr) && kb.raw!.calls.has(chr)).map((chr) => {
+        const pos = ka.raw!.calls.get(chr)!.position
+        return {
+          chromosome: chr,
+          startCm: ONE_CM_PER_MB.toCm(chr, Number(pos[0] ?? 0)),
+          endCm: ONE_CM_PER_MB.toCm(chr, Number(pos[pos.length - 1] ?? 0)),
+          segments: c.segments.filter((s) => s.chromosome === chr).map((s) => ({ startCm: s.startCm, endCm: s.endCm, cm: s.cm, markers: s.markers })),
+        }
+      })
+      return { a, b, totalCm: c.totalCm, longestCm: c.longestCm, map: c.map, comparedMarkers: c.comparedMarkers, chromosomes }
     },
 
     async unblind({ kit }) {

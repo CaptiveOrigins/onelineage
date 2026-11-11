@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Chromosome browser, 2026-11-10: a Chromosomes screen in the Mac app compares two family kits' raw DNA on this Mac. It draws the shared segments on chromosomes 1–22, with a table of the same segments for keyboard and screen-reader use. The demo family now uses a denser made-up panel (about 50 markers per cM). Comparisons use the chip-error tolerance.
+
 - OneLineage for Mac, v0, 2026-11-10: `apps/desktop`, Tauri 2 with React. First launch asks for a library folder, asks once which kind of use this is (recorded in the decisions log; law-enforcement use isn't offered), and sets up two backup destinations, with a recorded confirmation for each step down. "Open a made-up demo family" makes a planted family in its own library. Its screens are Kits, Matches (a sortable, filterable, keyboard-usable table), Theory (the recorded tree drawn with OnePedigree, behind the blind gate, with the planted misattributed father as two candidates), Backups (destinations, the last checked copy, "Back up everywhere" and the verdict), and a stub for the DNA network. A Privacy switch swaps every name for a consistent stand-in. The packages run unchanged in a small Node host beside the window (ADR 0007). Tested with Vitest and in a browser against the dev host; the Mac app was built locally and opened, and its window reached the host. Not yet: a bundled Node, the Keychain (stubbed), real imports, the chromosome browser and the network graph.
 - One person across services, 2026-11-10:
   - `newPersonId` gives every person a permanent random universal ID.

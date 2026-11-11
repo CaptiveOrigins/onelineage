@@ -118,6 +118,10 @@ export type TheoryDocument = {
 
 export type BackupRun = { results: { destination: string; ok: boolean; files: number; encrypted: boolean; problems: string[] }[]; state: BackupState }
 
+/** One chromosome as drawn: the compared stretch, and the shared segments on it, in cM. */
+export type ChromosomeRow = { chromosome: string; startCm: number; endCm: number; segments: { startCm: number; endCm: number; cm: number; markers: number }[] }
+export type SegmentsResult = { a: string; b: string; totalCm: number; longestCm: number; map: string; comparedMarkers: number; chromosomes: ChromosomeRow[] }
+
 export type HostApi = {
   status: { params: Record<string, never>; result: Status }
   chooseLibrary: { params: { path: string }; result: Status }
@@ -135,5 +139,7 @@ export type HostApi = {
   matches: { params: { kit: string }; result: MatchRow[] }
   theory: { params: Record<string, never>; result: TheoryResult | null }
   unblind: { params: { kit: string }; result: TheoryResult | null }
+  /** Two family kits compared on this Mac from their raw DNA, for the chromosome browser. */
+  segments: { params: { a: string; b: string }; result: SegmentsResult }
 }
 export type HostMethod = keyof HostApi

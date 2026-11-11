@@ -30,7 +30,8 @@ export async function createDemoLibrary(dir: string, seed: number, now = new Dat
   const date = now.toISOString().slice(0, 10)
   const family = standardFamily({ seed })
   const byId = new Map(family.persons.map((p) => [p.id, p]))
-  const panel = makePanel(seed)
+  // About 50 markers per cM, close to a real chip, so comparisons find real segments rather than chance runs.
+  const panel = makePanel(seed, 50)
   const book = new AlleleBook(panel, seed)
 
   for (const [i, kitId] of family.kits.entries()) {

@@ -111,6 +111,14 @@ describe('the demo family', () => {
     // The two family kits are parent and child: about half the genome, compared on this Mac.
     expect(comparisons[0]!.totalCm).toBeGreaterThan(3000)
 
+    // The chromosome browser's data: parent and child share along all 22 chromosomes.
+    const seg = await h.segments({ a: kits[0]!.kit, b: kits[1]!.kit })
+    expect(seg.chromosomes).toHaveLength(22)
+    expect(seg.chromosomes.every((c) => c.segments.length >= 1 && c.endCm > c.startCm)).toBe(true)
+    expect(seg.totalCm).toBeGreaterThan(3300)
+    expect(seg.map).toMatch(/approximate/)
+    await expect(h.segments({ a: kits[0]!.kit, b: 'nope' })).rejects.toThrow(/isn’t in this library/)
+
     const rows = await h.matches({ kit: kits[0]!.kit })
     expect(rows.length).toBe(kits[0]!.matches)
     expect(rows.every((r) => r.cm >= 8)).toBe(true)
