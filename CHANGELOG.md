@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The app's cache, 2026-11-10: each library's SQLite cache is built in the app's own folder from the library's stored exports, read through the importers with their checks, on every load. A `cacheCheck` request rebuilds it in memory, compares digests (S11), and replaces the file on disk if they differ.
+
 - Chrome extension, 2026-11-10: `apps/extension` is the collector the Mac app uses (ADR 0009). It's a Manifest V3 extension with a service worker, a side panel and a toolbar button.
   - It stores nothing, and reaches the app only through Chrome's native messaging. The native host relays to the app over a Unix socket, so there's no network port.
   - Only our extension can connect. The host manifest lists only its ID, and the app checks the caller's origin again. Developer builds are trusted only from the app's Extension screen, as a recorded decision. No other extension or web page can message it.

@@ -118,6 +118,25 @@ describe('first launch, on the host', () => {
   })
 })
 
+describe('the cache', () => {
+  it('is built in the app folder from the library, and a check rebuilds it when it drifts (S11)', async () => {
+    const { root, h } = setup()
+    await h.chooseLibrary({ path: join(root, 'lib') })
+    await h.openDemo({ seed: 1 })
+    await h.kits({})
+    const files = readdirSync(join(root, 'state', 'cache')).filter((n) => n.endsWith('.sqlite'))
+    expect(files).toHaveLength(1)
+    expect((await h.cacheCheck({})).ok).toBe(true)
+    const { DatabaseSync } = await import('node:sqlite')
+    const db = new DatabaseSync(join(root, 'state', 'cache', files[0]!))
+    db.exec('UPDATE observation SET shared_cm = 1')
+    db.close()
+    const drifted = await h.cacheCheck({})
+    expect(drifted).toMatchObject({ ok: false, rebuilt: true })
+    expect((await h.cacheCheck({})).ok).toBe(true)
+  })
+})
+
 describe('privacy names', () => {
   it('keeps one stand-in map per library, reserves its real words, and saves new pairings', async () => {
     const { root, h } = setup()

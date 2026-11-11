@@ -3,13 +3,15 @@
  * and holds no app logic they should own. The Mac app runs it as a child process (host/main.ts); `pnpm dev`
  * in a browser serves it from the Vite dev server; tests call it directly.
  */
-import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { DatabaseSync } from 'node:sqlite'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { BlindGate, compareKits, ONE_CM_PER_MB, sha256Hex, TermsRegister, type Unblinding } from '@captiveorigins/onelineage-core'
 import { importGenealogyAssistant, importRawDna, type ImportResult, type RawImport } from '@captiveorigins/onelineage-connectors'
 import {
   appendDecision, backupTo, backupVerdict, canLowerBypass, checkBackup, decisionsPath, initLibrary, isCloudSynced, listFiles, openLibrary,
-  readDecisions, type BypassLevel, type Decision,
+  buildCache, cacheDigest, readDecisions, type BypassLevel, type Decision,
 } from '@captiveorigins/onelineage-library'
 import type { PedigreeDocument } from '@captiveorigins/onepedigree-core'
 import { withCandidateFathers, type TreePerson } from '../src/pedigree'
@@ -112,6 +114,14 @@ export function createHost(opts: {
   async function load(lib: string): Promise<Loaded> {
     const have = loaded.get(lib)
     if (have) return have
+    const out = await importOnly(lib)
+    loaded.set(lib, out)
+    await writeCache(lib, out)
+    return out
+  }
+
+  /** Read every stored export through its importer, with the checks. Writes nothing. */
+  async function importOnly(lib: string): Promise<Loaded> {
     const gate = gateOf(await decisions(lib))
     const folders = exportFolders(lib)
     const kits: LoadedKit[] = []
@@ -133,9 +143,24 @@ export function createHost(opts: {
       ? { name: treeFolder.label.slice('own tree '.length), doc: JSON.parse(new TextDecoder().decode(readExport(treeFolder.folder)['own-tree.onepedigree.json'])) as PedigreeDocument }
       : null
     const answers = folders.find((f) => f.label === 'answers')
-    const out: Loaded = { kits, ownTree, truthFile: answers ? join(answers.folder, 'truth.json') : null }
-    loaded.set(lib, out)
-    return out
+    return { kits, ownTree, truthFile: answers ? join(answers.folder, 'truth.json') : null }
+  }
+
+  /**
+   * The cache (ADR 0005): a SQLite file in the app's own folder, one per library, rebuilt from the library on
+   * every load. It's never the source of truth, so losing it loses nothing.
+   */
+  const cachePath = (lib: string) => join(opts.stateDir, 'cache', `${createHash('sha256').update(lib).digest('hex').slice(0, 32)}.sqlite`)
+  const cacheInput = async (lib: string, data: Loaded) => ({
+    observations: data.kits.flatMap((k) => k.result.observations),
+    links: data.kits.flatMap((k) => k.result.links),
+    decisions: await decisions(lib),
+  })
+  async function writeCache(lib: string, data: Loaded) {
+    mkdirSync(join(opts.stateDir, 'cache'), { recursive: true })
+    const file = cachePath(lib)
+    rmSync(file, { force: true })
+    buildCache(file, await cacheInput(lib, data)).close()
   }
 
   // --- Backups
@@ -474,6 +499,21 @@ export function createHost(opts: {
       }
       writeFileSync(file, JSON.stringify(saved, null, 2) + '\n')
       return { saved: n }
+    },
+
+    /** S11: rebuild from the library in memory and compare with the cache on disk. */
+    async cacheCheck() {
+      const lib = current()
+      loaded.delete(lib)
+      const file = cachePath(lib)
+      const before = existsSync(file) ? await (async () => { const db = new DatabaseSync(file); try { return await cacheDigest(db) } finally { db.close() } })() : null
+      const data = await importOnly(lib)
+      const fresh = buildCache(':memory:', await cacheInput(lib, data))
+      const after = await cacheDigest(fresh)
+      fresh.close()
+      const ok = before === after
+      if (!ok) { loaded.set(lib, data); await writeCache(lib, data) }
+      return { ok, rebuilt: !ok, digest: after }
     },
 
     async backupKeyRecovery() {
