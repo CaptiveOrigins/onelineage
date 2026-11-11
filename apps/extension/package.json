@@ -1,0 +1,22 @@
+{
+  "name": "onelineage-extension",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "The OneLineage Chrome extension: the Mac app's collector. Stores nothing, talks to the app only through Chrome native messaging, shows match details in its side panel, and in this version visits only a local mock site.",
+  "license": "SEE LICENSE IN LICENSE",
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "mock-site": "tsup --config tsup.mock.config.ts && node mock-dist/mock-site.mjs"
+  },
+  "devDependencies": {
+    "@captiveorigins/onelineage-core": "workspace:*",
+    "@captiveorigins/onelineage-simulate": "workspace:*",
+    "@types/node": "^24.19.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.0",
+    "vitest": "^4.1.12"
+  }
+}

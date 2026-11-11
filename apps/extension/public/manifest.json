@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "OneLineage collector",
+  "short_name": "OneLineage",
+  "version": "0.0.1",
+  "description": "Collects for the OneLineage Mac app, with your OK in the app. Stores nothing. This version works only with a local mock site.",
+  "minimum_chrome_version": "116",
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_title": "OneLineage: turn privacy on or off in the app" },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "commands": {
+    "open-side-panel": { "suggested_key": { "default": "Ctrl+Shift+Y", "mac": "Command+Shift+Y" }, "description": "Open the OneLineage side panel" }
+  },
+  "permissions": ["nativeMessaging", "sidePanel", "scripting"],
+  "host_permissions": ["http://127.0.0.1/*"],
+  "externally_connectable": { "ids": [] },
+  "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'" }
+}

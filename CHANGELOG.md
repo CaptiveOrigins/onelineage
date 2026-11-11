@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Chrome extension, 2026-11-10: `apps/extension` is the collector the Mac app uses (ADR 0009). It's a Manifest V3 extension with a service worker, a side panel and a toolbar button.
+  - It stores nothing, and reaches the app only through Chrome's native messaging. The native host relays to the app over a Unix socket, so there's no network port.
+  - Only our extension can connect. The host manifest lists only its ID, and the app checks the caller's origin again. Developer builds are trusted only from the app's Extension screen, as a recorded decision. No other extension or web page can message it.
+  - The command list is fixed and short. Requests started in the extension wait for allow once, allow for this session (one kit, up to an hour, ending when Chrome closes) or deny. Grants expire, active ones show with "End now", and every hand-over is logged with its fields but not their values.
+  - Match details appear only in the side panel. The toolbar button toggles privacy in the app.
+  - Every run goes through the terms register, and every real DNA service is refused. This version also refuses anything but 127.0.0.1. It was built and tested only against a new mock site (`apps/extension/mock-site`) with made-up people and its own synthetic terms entry. Human pace applies: one page at a time, 30–60 s pauses, 100 pages a day, and a stop at any challenge, sign-in page or error.
+  - Includes an install script for the native host, which writes only when the person runs it.
+
+  Tested with Vitest (44 new tests): the framing, origin checks, the command list, grants and their expiry, the privacy wiring, the terms gate, the run loop against the mock site, and a static check for storage APIs. Not yet tried: the extension loaded into Chrome, and the native host installed. Collected pages stay in the app's memory for now.
 - Privacy mode, 2026-11-10: stand-ins come from a map saved in the library (`privacy-names.json`), so every recording shows the same made-up names. A stand-in is never a real word in the library. Stand-ins keep patronymic endings (-sdotter, -sson) and joined prefixes (Mc, Mac, O'), and spelling variants share a root. ⌘⇧P flips privacy from anywhere. While the map loads, privacy shows nothing rather than a real name.
 
 - Keychain backup keys, 2026-11-10: the Mac app keeps one random 32-byte backup key per library in the macOS Keychain, through Apple's `security` tool, and never passes a shell. It's created when first needed, read back before use, and stored under a hashed account so no folder names reach the Keychain. A recovery copy can be shown on request. Backups to cloud-synced folders now work, encrypted on this Mac. Limit: the Keychain item trusts the `security` tool, not the signed app, until app signing exists.

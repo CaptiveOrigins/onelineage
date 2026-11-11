@@ -6,9 +6,17 @@ import { createInterface } from 'node:readline'
 import { createHost, defaultStateDir } from './handlers'
 import { keychainStore } from './keychain'
 import { noKeyStore } from './keys'
+import { listenForExtension, socketPath } from './extension/socket'
 
+const stateDir = process.env['ONELINEAGE_STATE_DIR'] || defaultStateDir()
 // The real Keychain on a Mac. Tests and the browser dev server never use it.
-const host = createHost({ stateDir: process.env['ONELINEAGE_STATE_DIR'] || defaultStateDir(), keys: process.platform === 'darwin' ? keychainStore() : noKeyStore })
+const host = createHost({ stateDir, keys: process.platform === 'darwin' ? keychainStore() : noKeyStore })
+
+// The extension reaches the app through Chrome's native messaging host, which relays over this socket (ADR 0009).
+void host.extension.ready.then(() =>
+  listenForExtension(socketPath(stateDir), host.extension).catch((e: Error) => process.stderr.write(`Extension link not started: ${e.message}\n`)),
+)
+setInterval(() => host.extension.expire(), 5000).unref()
 const lines = createInterface({ input: process.stdin, crlfDelay: Infinity })
 
 let queue = Promise.resolve()

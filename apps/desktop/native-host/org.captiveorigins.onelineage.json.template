@@ -1,0 +1,9 @@
+{
+  "name": "org.captiveorigins.onelineage",
+  "description": "OneLineage: lets the OneLineage extension talk to the OneLineage app on this Mac.",
+  "path": "__HOST_PATH__",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://__EXTENSION_ID__/"
+  ]
+}

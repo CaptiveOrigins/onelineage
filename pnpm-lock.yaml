@@ -85,6 +85,27 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12(@types/node@24.19.2)(vite@7.3.8(@types/node@24.19.2)(lightningcss@1.33.0))
 
+  apps/extension:
+    devDependencies:
+      '@captiveorigins/onelineage-core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@captiveorigins/onelineage-simulate':
+        specifier: workspace:*
+        version: link:../../packages/simulate
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.1(postcss@8.5.32)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.9.0
+        version: 5.9.3
+      vitest:
+        specifier: ^4.1.12
+        version: 4.1.12(@types/node@24.19.2)(vite@8.3.7(@types/node@24.19.2)(esbuild@0.27.7))
+
   packages/analysis:
     dependencies:
       '@captiveorigins/onelineage-core':

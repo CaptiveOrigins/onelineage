@@ -42,7 +42,7 @@ Option 3.
 - **Backups can't be cancelled** while they run.
 - **The icon is a placeholder**: the OneOrigin tile in a plain warm taupe, with no glyph, until the mark is approved.
 - **No updater**, because there's no signing key yet.
-- Not in v0: real-data import, the Chrome extension, the chromosome browser and the DNA network graph (a stub screen says it's coming).
+- Not in v0: real-data import, the chromosome browser and the DNA network graph (a stub screen says it's coming). The Chrome extension came after v0, and has its own ADR (0009).
 
 ## Consequences
 

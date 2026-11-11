@@ -4,6 +4,8 @@
  */
 import type { MatchSide } from '@captiveorigins/onelineage-core'
 import type { PedigreeDocument } from '@captiveorigins/onepedigree-core'
+import type { ExtensionStatus } from './extension/bridge'
+import type { LabelInstruction } from './extension/wire'
 
 /** The kinds of use USE-POLICY.md allows. Law-enforcement use isn't one of them, so it can't be recorded. */
 export const USE_KINDS = ['personal', 'for-someone-else', 'sanctioned-lab', 'wildlife-agency'] as const
@@ -122,6 +124,13 @@ export type BackupRun = { results: { destination: string; ok: boolean; files: nu
 export type ChromosomeRow = { chromosome: string; startCm: number; endCm: number; segments: { startCm: number; endCm: number; cm: number; markers: number }[] }
 export type SegmentsResult = { a: string; b: string; totalCm: number; longestCm: number; map: string; comparedMarkers: number; chromosomes: ChromosomeRow[] }
 
+/** The extension, as the app's Extension screen shows it (ADR 0009). */
+export type ExtensionView = ExtensionStatus & {
+  /** Developer builds trusted in the app's settings, each a recorded decision. */
+  developerIds: string[]
+  publishedId: string | null
+}
+
 export type HostApi = {
   status: { params: Record<string, never>; result: Status }
   chooseLibrary: { params: { path: string }; result: Status }
@@ -147,5 +156,21 @@ export type HostApi = {
   backupKeyRecovery: { params: Record<string, never>; result: { copy: string } }
   /** Two family kits compared on this Mac from their raw DNA, for the chromosome browser. */
   segments: { params: { a: string; b: string }; result: SegmentsResult }
+  /** The Chrome extension: connection, waiting requests, grants, the current run and the hand-over log. */
+  extensionStatus: { params: Record<string, never>; result: ExtensionView }
+  /** The owner's answer to a request started in the extension. */
+  extensionDecide: { params: { request: string; answer: 'once' | 'session' | 'deny' }; result: ExtensionView }
+  /** "End now" on a grant. */
+  extensionEndGrant: { params: { grant: string }; result: ExtensionView }
+  /** Start collecting a kit's matches on a site. In this version only the local mock site on 127.0.0.1 is allowed. */
+  extensionStartRun: { params: { kit: string; site: string; origin: string; maxPages?: number }; result: ExtensionView }
+  extensionStopRun: { params: Record<string, never>; result: ExtensionView }
+  /** Apply a label batch the owner approved, one page at a time. */
+  extensionApplyLabels: { params: { kit: string; site: string; origin: string; labels: LabelInstruction[]; approved: boolean }; result: ExtensionView }
+  /** The app's privacy switch, shared with the extension's side panel. */
+  setPrivacy: { params: { on: boolean }; result: ExtensionView }
+  /** Trust a developer build of the extension, by its ID. Recorded in the decisions log; `confirm` must be true. */
+  trustDeveloperExtension: { params: { id: string; confirm: boolean }; result: ExtensionView }
+  untrustDeveloperExtension: { params: { id: string }; result: ExtensionView }
 }
 export type HostMethod = keyof HostApi

@@ -1,6 +1,6 @@
-import { AlignLeft, Dna, Eye, EyeOff, GitBranch, HardDrive, Network, Settings, Table2, Users } from 'lucide-react'
+import { AlignLeft, Dna, Eye, EyeOff, GitBranch, HardDrive, Network, Puzzle, Settings, Table2, Users } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import type { BackupState, KitsResult, Status, TheoryResult } from '../host/protocol'
+import type { BackupState, ExtensionView, KitsResult, Status, TheoryResult } from '../host/protocol'
 import { call } from './api'
 import { firstLaunchStep, flowInputs } from './flow'
 import { BackupsScreen, Verdict } from './screens/Backups'
@@ -9,10 +9,11 @@ import { KitsScreen } from './screens/Kits'
 import { MatchesScreen } from './screens/Matches'
 import { TheoryScreen } from './screens/Theory'
 import { ChromosomesScreen } from './screens/Chromosomes'
+import { ExtensionGrantBanner, ExtensionRequestDialog, ExtensionScreen } from './screens/Extension'
 import { createStandIns } from './standins'
 import { ErrorBox, Icon, NamesContext } from './ui'
 
-type Screen = 'kits' | 'matches' | 'chromosomes' | 'theory' | 'network' | 'backups'
+type Screen = 'kits' | 'matches' | 'chromosomes' | 'theory' | 'network' | 'backups' | 'extension'
 const SCREENS: { id: Screen; label: string; icon: typeof Users }[] = [
   { id: 'kits', label: 'Kits', icon: Users },
   { id: 'matches', label: 'Matches', icon: Table2 },
@@ -20,6 +21,7 @@ const SCREENS: { id: Screen; label: string; icon: typeof Users }[] = [
   { id: 'theory', label: 'Theory', icon: GitBranch },
   { id: 'network', label: 'DNA network', icon: Network },
   { id: 'backups', label: 'Backups', icon: HardDrive },
+  { id: 'extension', label: 'Extension', icon: Puzzle },
 ]
 type Appearance = 'auto' | 'light' | 'dark'
 
@@ -46,6 +48,25 @@ export function App() {
   const [message, setMessage] = useState<string | null>(null)
   const [screen, setScreen] = useState<Screen>('kits')
   const [privacy, setPrivacy] = useState(false)
+  const privacyRef = useRef(privacy)
+  privacyRef.current = privacy
+  // The Chrome extension's state, read every two seconds: requests waiting for an answer, grants, the run. The
+  // privacy switch lives in the host so the extension's toolbar button and this window share it.
+  const [ext, setExt] = useState<ExtensionView | null>(null)
+  const onExt = useCallback((v: ExtensionView) => {
+    setExt(v)
+    setPrivacy(v.privacy)
+  }, [])
+  useEffect(() => {
+    let live = true
+    const tick = () => call('extensionStatus').then((v) => live && onExt(v), () => {})
+    tick()
+    const t = setInterval(tick, 2000)
+    return () => {
+      live = false
+      clearInterval(t)
+    }
+  }, [onExt])
   const [appearance, setAppearance, dark] = useAppearance()
   const settings = useRef<HTMLDialogElement>(null)
 
@@ -75,11 +96,16 @@ export function App() {
   // Cmd+Shift+P (Ctrl+Shift+P elsewhere) flips privacy from anywhere, without hunting for the button.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'p') { e.preventDefault(); setPrivacy((v) => !v) }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'p') {
+        e.preventDefault()
+        // Through the host, like the button, so the extension's toolbar stays in step.
+        const next = !privacyRef.current
+        call('setPrivacy', { on: next }).then(onExt, () => setPrivacy(next))
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  }, [onExt])
 
   const refresh = useCallback(async (s?: Status) => {
     try {
@@ -141,7 +167,7 @@ export function App() {
               <Icon of={EyeOff} size={14} /> Privacy on
             </span>
           )}
-          <button type="button" aria-pressed={privacy} onClick={() => setPrivacy(!privacy)} title="Show stand-in names instead of real ones, in every view (⌘⇧P)" aria-keyshortcuts="Meta+Shift+P">
+          <button type="button" aria-pressed={privacy} onClick={() => call('setPrivacy', { on: !privacy }).then(onExt, () => setPrivacy(!privacy))} title="Show stand-in names instead of real ones, in every view (⌘⇧P)">
             <Icon of={privacy ? EyeOff : Eye} /> Privacy
           </button>
           <button type="button" onClick={() => settings.current?.showModal()}>
@@ -151,10 +177,11 @@ export function App() {
         <div className="ol-status" aria-live="polite">
           {message ?? (status.current ? `Library: ${status.current.path}` : '')}
         </div>
-        <Main key={`${status.current?.path}-${screen}`} screen={screen} status={status} backups={backups} onBackups={setBackups} dark={dark} openDemo={openDemo} openHome={openHome}>
+        <Main key={`${status.current?.path}-${screen}`} screen={screen} status={status} backups={backups} onBackups={setBackups} dark={dark} openDemo={openDemo} openHome={openHome} ext={ext} onExt={onExt}>
           <ErrorBox error={error} onDismiss={() => setError(null)} />
         </Main>
       </div>
+      <ExtensionRequestDialog view={ext} onView={onExt} />
       <dialog ref={settings} aria-labelledby="settings-h">
         <form method="dialog">
           <h1 id="settings-h">Settings</h1>
@@ -190,6 +217,8 @@ function Main(props: {
   dark: boolean
   openDemo: () => Promise<void>
   openHome: () => Promise<void>
+  ext: ExtensionView | null
+  onExt: (v: ExtensionView) => void
   children: ReactNode
 }) {
   const heading = useRef<HTMLHeadingElement>(null)
@@ -201,12 +230,12 @@ function Main(props: {
 
   useEffect(() => heading.current?.focus(), [])
   useEffect(() => {
-    if (hasKits && (screen === 'kits' || screen === 'matches' || screen === 'chromosomes')) call('kits').then(setKits, (e: Error) => setError(e.message))
+    if (hasKits && (screen === 'kits' || screen === 'matches' || screen === 'chromosomes' || screen === 'extension')) call('kits').then(setKits, (e: Error) => setError(e.message))
     if (hasKits && screen === 'theory') call('theory').then(setTheory, (e: Error) => setError(e.message))
   }, [screen, hasKits])
 
   const title = SCREENS.find((s) => s.id === screen)!.label
-  const needsKits = screen !== 'backups' && screen !== 'network'
+  const needsKits = screen !== 'backups' && screen !== 'network' && screen !== 'extension'
 
   return (
     <main className="ol-main">
@@ -218,11 +247,13 @@ function Main(props: {
           </button>
         </div>
       )}
+      <ExtensionGrantBanner view={props.ext} onView={props.onExt} />
       <h1 ref={heading} tabIndex={-1}>
         {title}
       </h1>
       {props.children}
       <ErrorBox error={error} onDismiss={() => setError(null)} />
+      {screen === 'extension' && <ExtensionScreen view={props.ext} onView={props.onExt} kits={kits?.kits ?? []} />}
       {screen === 'backups' && props.backups && <BackupsScreen backups={props.backups} onBackups={props.onBackups} />}
       {screen === 'network' && (
         <p>

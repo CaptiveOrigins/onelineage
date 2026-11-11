@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "noEmit": true,
+    "declaration": false,
+    "types": ["node"],
+    "paths": {
+      "@captiveorigins/onelineage-core": ["../../packages/core/src/index.ts"],
+      "@captiveorigins/onelineage-simulate": ["../../packages/simulate/src/index.ts"]
+    }
+  },
+  "include": ["src", "mock-site", "test", "tsup.config.ts", "tsup.mock.config.ts", "vitest.config.ts"]
+}

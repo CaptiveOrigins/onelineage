@@ -9,6 +9,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build && pnpm build:host",
     "build:host": "tsup --config tsup.host.config.ts",
+    "native-host:install": "node host-dist/install-native-host.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "tauri": "tauri",

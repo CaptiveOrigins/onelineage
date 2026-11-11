@@ -3,7 +3,7 @@
  * and holds no app logic they should own. The Mac app runs it as a child process (host/main.ts); `pnpm dev`
  * in a browser serves it from the Vite dev server; tests call it directly.
  */
-import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { BlindGate, compareKits, ONE_CM_PER_MB, sha256Hex, TermsRegister, type Unblinding } from '@captiveorigins/onelineage-core'
 import { importGenealogyAssistant, importRawDna, type ImportResult, type RawImport } from '@captiveorigins/onelineage-connectors'
@@ -14,10 +14,13 @@ import {
 import type { PedigreeDocument } from '@captiveorigins/onepedigree-core'
 import { withCandidateFathers, type TreePerson } from '../src/pedigree'
 import { createDemoLibrary, DEMO_NOTE } from './demo'
+import { createExtensionBridge, type ExtensionData } from './extension/bridge'
+import { extensionRegister } from './extension/terms'
+import { PUBLISHED_EXTENSION_ID } from './extension/wire'
 import { noKeyStore, type KeyStore } from './keys'
 import {
   USE_KINDS, USE_POLICY_VERSION, type BackupRun, type BackupState, type DestinationState, type HostApi, type HostMethod, type KitsResult,
-  type LibraryState, type MatchRow, type Status, type TheoryResult, type UseDeclaration, type UseKind,
+  type ExtensionView, type LibraryState, type MatchRow, type Status, type TheoryResult, type UseDeclaration, type UseKind,
 } from './protocol'
 import { readState, writeState, type AppState } from './state'
 
@@ -35,7 +38,15 @@ type Loaded = { kits: LoadedKit[]; ownTree: { name: string; doc: PedigreeDocumen
 
 export class HostError extends Error {}
 
-export function createHost(opts: { stateDir: string; keys?: KeyStore; now?: () => Date }) {
+const SIDE_LINE: Record<string, string> = { paternal: 'Father’s side', maternal: 'Mother’s side', both: 'Both sides', unassigned: 'Not placed yet' }
+
+export function createHost(opts: {
+  stateDir: string
+  keys?: KeyStore
+  now?: () => Date
+  /** The real services' terms files (name → text) for the extension's register. Without them every real service is refused. */
+  termsFiles?: Readonly<Record<string, string>>
+}) {
   const keys = opts.keys ?? noKeyStore
   const now = opts.now ?? (() => new Date())
   const loaded = new Map<string, Loaded>()
@@ -173,6 +184,81 @@ export function createHost(opts: { stateDir: string; keys?: KeyStore; now?: () =
     s.destinations[lib] = f(s.destinations[lib] ?? [])
     save(s)
   }
+
+  // --- The Chrome extension (ADR 0009)
+
+  let developerIds: string[] = []
+  const readDeveloperIds = async () => {
+    const home = state().home
+    if (!home) return (developerIds = [])
+    const trusted = new Set<string>()
+    for (const d of await decisions(home)) {
+      if (d.kind !== 'extension-developer-id') continue
+      const id = String(d.data['id'])
+      if (d.data['trusted'] === true) trusted.add(id)
+      else trusted.delete(id)
+    }
+    return (developerIds = [...trusted])
+  }
+  const ready = readDeveloperIds().catch(() => [])
+
+  /** Collected in this session only, in memory. Writing collected pages into the library comes later. */
+  const collected = new Map<string, { listed: Set<string>; fetched: Set<string> }>()
+  const collectedFor = (kit: string) => {
+    let c = collected.get(kit)
+    if (!c) collected.set(kit, (c = { listed: new Set(), fetched: new Set() }))
+    return c
+  }
+  const libraryMatchIds = async (kit: string): Promise<Set<string>> => {
+    const lib = state().current
+    if (!lib) return new Set()
+    const k = (await load(lib)).kits.find((x) => x.result.kit === kit)
+    return new Set(k?.result.observations.map((o) => o.match) ?? [])
+  }
+  const extensionData: ExtensionData = {
+    async matchSummary(kit, match) {
+      const lib = state().current
+      if (!lib) return null
+      const k = (await load(lib)).kits.find((x) => x.result.kit === kit)
+      const o = k?.result.observations.find((x) => x.match === match)
+      if (!o) return null
+      // No names go across, so there's nothing for the privacy switch to replace here.
+      return { match: o.match, line: SIDE_LINE[o.side] ?? 'Not placed yet', confidence: 'Not computed yet: the line is the service’s own side label.', theories: [] }
+    },
+    async acceptPage(kit, _site, page) {
+      const c = collectedFor(kit)
+      if (page.kind === 'match-list' && Array.isArray(page.data['matches']))
+        for (const m of page.data['matches'] as { id?: unknown }[]) if (typeof m?.id === 'string') c.listed.add(m.id)
+      if (page.kind === 'match') {
+        const id = (page.data['match'] as { id?: unknown } | undefined)?.id
+        if (typeof id === 'string') c.fetched.add(id)
+      }
+    },
+    async newMatches(kit, limit) {
+      const c = collectedFor(kit)
+      const have = await libraryMatchIds(kit)
+      return [...c.listed].filter((id) => !c.fetched.has(id) && !have.has(id)).slice(0, limit)
+    },
+  }
+  const logPath = join(opts.stateDir, 'extension-handovers.jsonl')
+  const extension = createExtensionBridge({
+    now,
+    terms: extensionRegister(opts.termsFiles ?? {}),
+    developerIds: () => developerIds,
+    data: extensionData,
+    log: (e) => {
+      mkdirSync(opts.stateDir, { recursive: true })
+      appendFileSync(logPath, JSON.stringify(e) + '\n')
+    },
+    pagesOn: (d) => state().extensionPages?.[d] ?? 0,
+    addPages: (d, n) => {
+      const s = state()
+      // Only today's count is kept.
+      s.extensionPages = { [d]: (s.extensionPages?.[d] ?? 0) + n }
+      save(s)
+    },
+  })
+  const extensionView = async (): Promise<ExtensionView> => ({ ...extension.status(), developerIds: await readDeveloperIds(), publishedId: PUBLISHED_EXTENSION_ID })
 
   // --- Handlers
 
@@ -395,6 +481,56 @@ export function createHost(opts: { stateDir: string; keys?: KeyStore; now?: () =
       return { copy: await keys.recoveryCopy(current()) }
     },
 
+    extensionStatus: extensionView,
+
+    async extensionDecide({ request, answer }) {
+      await extension.decide(request, answer)
+      return extensionView()
+    },
+
+    async extensionEndGrant({ grant }) {
+      extension.endGrant(grant)
+      return extensionView()
+    },
+
+    async extensionStartRun({ kit, site, origin, maxPages }) {
+      extension.startRun({ kit, site, origin, ...(maxPages ? { maxPages } : {}) })
+      return extensionView()
+    },
+
+    async extensionStopRun() {
+      extension.stopRun()
+      return extensionView()
+    },
+
+    async extensionApplyLabels({ kit, site, origin, labels, approved }) {
+      extension.applyLabels({ kit, site, origin, labels: Array.isArray(labels) ? labels : [], approved })
+      return extensionView()
+    },
+
+    async setPrivacy({ on }) {
+      extension.setPrivacy(on === true)
+      return extensionView()
+    },
+
+    async trustDeveloperExtension({ id, confirm }) {
+      const home = state().home
+      if (!home) throw new HostError('Choose a library folder first: the trust is recorded in its decisions log.')
+      if (typeof id !== 'string' || !/^[a-p]{32}$/.test(id)) throw new HostError('That isn’t a Chrome extension ID. It’s 32 letters from a to p, shown on chrome://extensions.')
+      if (confirm !== true) throw new HostError('Trusting a developer build needs its own confirmation.')
+      if ((await readDeveloperIds()).includes(id)) throw new HostError('That developer build is already trusted.')
+      await appendDecision(decisionsPath(home), { by: BY, kind: 'extension-developer-id', data: { id, trusted: true, confirmed: true }, at: now().toISOString() })
+      return extensionView()
+    },
+
+    async untrustDeveloperExtension({ id }) {
+      const home = state().home
+      if (!home) throw new HostError('Choose a library folder first.')
+      if (!(await readDeveloperIds()).includes(id)) throw new HostError('That developer build isn’t trusted.')
+      await appendDecision(decisionsPath(home), { by: BY, kind: 'extension-developer-id', data: { id, trusted: false }, at: now().toISOString() })
+      return extensionView()
+    },
+
     async unblind({ kit }) {
       const lib = current()
       const data = await load(lib)
@@ -416,6 +552,8 @@ export function createHost(opts: { stateDir: string; keys?: KeyStore; now?: () =
       return fn(params ?? {})
     },
     handlers,
+    /** The extension bridge, for the socket listener in main.ts. Resolves once trusted developer IDs are read. */
+    extension: Object.assign(extension, { ready }),
   }
 }
 export type Host = ReturnType<typeof createHost>

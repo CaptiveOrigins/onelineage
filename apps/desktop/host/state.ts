@@ -14,6 +14,8 @@ export type AppState = {
   /** The library on screen. */
   current: string | null
   destinations: Record<string, string[]>
+  /** Pages the extension visited per day (YYYY-MM-DD), for the daily cap. Counts only, nothing about the pages. */
+  extensionPages?: Record<string, number>
 }
 
 const EMPTY: AppState = { version: 1, home: null, demo: null, current: null, destinations: {} }

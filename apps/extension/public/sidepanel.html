@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>OneLineage</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <header>
+      <h1>OneLineage</h1>
+      <span id="privacy" class="badge" hidden>Privacy on</span>
+    </header>
+    <p id="connection" role="status" aria-live="polite">Connecting to OneLineage…</p>
+    <button type="button" id="connect" hidden>Connect</button>
+
+    <section aria-labelledby="run-h">
+      <h2 id="run-h">Run</h2>
+      <p id="run" aria-live="polite">No run yet. Runs are started in the app.</p>
+    </section>
+
+    <section aria-labelledby="match-h">
+      <h2 id="match-h">This page</h2>
+      <p class="hint">Each of these asks for your OK in OneLineage first.</p>
+      <div class="buttons">
+        <button type="button" id="summarise">Summarise this match</button>
+        <button type="button" id="hand-over">Hand this page to OneLineage</button>
+        <button type="button" id="new-matches">Count new matches to fetch</button>
+      </div>
+      <p id="notice" role="status" aria-live="polite"></p>
+      <dl id="summary" hidden>
+        <dt>Match</dt><dd id="s-match"></dd>
+        <dt>Line</dt><dd id="s-line"></dd>
+        <dt>Confidence</dt><dd id="s-confidence"></dd>
+        <dt>Theories</dt><dd id="s-theories"></dd>
+        <dt>Shown until</dt><dd id="s-expires"></dd>
+      </dl>
+    </section>
+    <p class="hint">This version works only with the local mock site on 127.0.0.1. It stores nothing.</p>
+    <script type="module" src="sidepanel.js"></script>
+  </body>
+</html>
