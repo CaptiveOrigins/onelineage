@@ -135,6 +135,24 @@ describe('DNA groups in the app', () => {
   })
 })
 
+describe('the GEDmatch checklist', () => {
+  it('recommends kits with raw DNA, records kit numbers and settings, flags opt-in, and needs a second confirmation for a minor', async () => {
+    const { root, h } = setup()
+    await h.chooseLibrary({ path: join(root, 'lib') })
+    await h.openDemo({ seed: 1 })
+    const first = await h.gedmatchStatus({})
+    expect(first.kits.every((k) => k.recommended && k.gedmatchId === null)).toBe(true)
+    const [a, b] = first.kits
+    await expect(h.recordGedmatchKit({ kit: a!.kit, gedmatchId: 'not a kit', setting: 'opt-out', minor: false })).rejects.toThrow(/kit number/)
+    const s1 = await h.recordGedmatchKit({ kit: a!.kit, gedmatchId: 'ab123456', setting: 'opt-in', minor: false })
+    expect(s1.kits[0]).toMatchObject({ gedmatchId: 'AB123456', setting: 'opt-in', recommended: false })
+    expect(s1.kits[0]!.warnings.join(' ')).toMatch(/law-enforcement/)
+    await expect(h.recordGedmatchKit({ kit: b!.kit, gedmatchId: 'C7654321', setting: 'research', minor: true })).rejects.toThrow(/parent or guardian/)
+    const s2 = await h.recordGedmatchKit({ kit: b!.kit, gedmatchId: 'C7654321', setting: 'research', minor: true, confirmMinor: true })
+    expect(s2.kits[1]!.warnings.join(' ')).toMatch(/Private/)
+  })
+})
+
 describe('label batches', () => {
   it('are proposed from DNA groups with an OL prefix, and nothing is applied or recorded without a connected extension', async () => {
     const { root, h } = setup()

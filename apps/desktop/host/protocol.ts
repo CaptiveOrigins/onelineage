@@ -131,6 +131,10 @@ export type ExtensionView = ExtensionStatus & {
   publishedId: string | null
 }
 
+export type GedmatchStatus = {
+  kits: { kit: string; name: string; hasRaw: boolean; gedmatchId: string | null; setting: 'opt-in' | 'opt-out' | 'research' | 'private' | null; minor: boolean; recordedAt: string | null; warnings: string[]; recommended: boolean }[]
+}
+
 export type HostApi = {
   status: { params: Record<string, never>; result: Status }
   chooseLibrary: { params: { path: string }; result: Status }
@@ -154,6 +158,8 @@ export type HostApi = {
   addPrivacyNames: { params: { pairs: Record<string, string> }; result: { saved: number } }
   /** What's due now: checks and reruns, with a counts-only message for a notification or email. */
   due: { params: Record<string, never>; result: { items: { kit: string; label: string; kind: 'check' | 'rerun'; dueOn: string; overdueDays: number; reason: string }[]; message: string | null } }
+  gedmatchStatus: { params: Record<string, never>; result: GedmatchStatus }
+  recordGedmatchKit: { params: { kit: string; gedmatchId: string; setting: 'opt-in' | 'opt-out' | 'research' | 'private'; minor: boolean; confirmMinor?: boolean }; result: GedmatchStatus }
   /** Whether to show a due notice now (at most once a day), with its counts-only text. */
   claimDueNotice: { params: Record<string, never>; result: { notify: boolean; message: string | null } }
   /** The kit's DNA groups, worked out from DNA figures alone (neutral IDs until unblinding). */

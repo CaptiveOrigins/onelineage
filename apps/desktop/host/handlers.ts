@@ -41,6 +41,10 @@ type Loaded = { kits: LoadedKit[]; ownTree: { name: string; doc: PedigreeDocumen
 
 export class HostError extends Error {}
 
+/** GEDmatch's own privacy settings, as of its 2024 terms: who can match the kit. */
+export const GEDMATCH_SETTINGS = ['opt-in', 'opt-out', 'research', 'private'] as const
+export type GedmatchSetting = (typeof GEDMATCH_SETTINGS)[number]
+
 const SIDE_LINE: Record<string, string> = { paternal: 'Father’s side', maternal: 'Mother’s side', both: 'Both sides', unassigned: 'Not placed yet' }
 
 export function createHost(opts: {
@@ -555,6 +559,42 @@ export function createHost(opts: {
       if (!message || s.lastDueNotice === today) return { notify: false, message: null }
       save({ ...s, lastDueNotice: today })
       return { notify: true, message }
+    },
+
+    /**
+     * The GEDmatch checklist (OneLineage plan section 5c). The app never uploads. The person uploads on
+     * GEDmatch's own page, then records the kit number and its privacy setting here. Records go in the
+     * decisions log. A minor's kit needs its own confirmation, and opt-in to law-enforcement matching is flagged.
+     */
+    async gedmatchStatus() {
+      const lib = current()
+      const data = await load(lib)
+      const recs = (await decisions(lib)).filter((d) => d.kind === 'gedmatch-kit')
+      const latest = new Map<string, Record<string, unknown>>()
+      for (const d of recs) latest.set(String(d.data['kit']), { ...d.data, recordedAt: d.at })
+      return {
+        kits: data.kits.map((k) => {
+          const r = latest.get(k.result.kit) as { gedmatchId?: string; setting?: GedmatchSetting; minor?: boolean; recordedAt?: string } | undefined
+          const warnings: string[] = []
+          if (r?.setting === 'opt-in') warnings.push('Opted in: law-enforcement searches can match this kit. Change it on GEDmatch to Opt-out, Research or Private unless that’s what this person wants.')
+          if (r?.minor && r.setting !== 'private') warnings.push('A minor’s kit: the recommended setting is Private.')
+          return {
+            kit: k.result.kit, name: k.name, hasRaw: Boolean(k.raw), gedmatchId: r?.gedmatchId ?? null, setting: r?.setting ?? null, minor: r?.minor ?? false, recordedAt: r?.recordedAt ?? null, warnings,
+            recommended: !r && Boolean(k.raw),
+          }
+        }),
+      }
+    },
+
+    async recordGedmatchKit({ kit, gedmatchId, setting, minor, confirmMinor }) {
+      const lib = current()
+      const data = await load(lib)
+      if (!data.kits.some((k) => k.result.kit === kit)) throw new HostError('That kit isn’t in this library.')
+      if (typeof gedmatchId !== 'string' || !/^[A-Z]{1,3}[0-9]{4,8}$/.test(gedmatchId.trim().toUpperCase())) throw new HostError('A GEDmatch kit number is a letter or two followed by digits, as shown on GEDmatch’s dashboard.')
+      if (!GEDMATCH_SETTINGS.includes(setting)) throw new HostError('Choose the kit’s privacy setting as GEDmatch shows it.')
+      if (minor === true && confirmMinor !== true) throw new HostError('A minor’s kit on GEDmatch needs its own confirmation that a parent or guardian chose this.')
+      await appendDecision(decisionsPath(lib), { by: BY, kind: 'gedmatch-kit', data: { kit, gedmatchId: gedmatchId.trim().toUpperCase(), setting, minor: minor === true }, at: now().toISOString() })
+      return handlers.gedmatchStatus({})
     },
 
     async groups({ kit }) {

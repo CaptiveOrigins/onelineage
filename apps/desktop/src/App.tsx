@@ -1,4 +1,4 @@
-import { AlignLeft, Dna, Eye, EyeOff, GitBranch, HardDrive, Network, Puzzle, Settings, Table2, Users } from 'lucide-react'
+import { AlignLeft, Upload, Dna, Eye, EyeOff, GitBranch, HardDrive, Network, Puzzle, Settings, Table2, Users } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { BackupState, ExtensionView, KitsResult, Status, TheoryResult } from '../host/protocol'
 import { call, inMacApp } from './api'
@@ -9,15 +9,17 @@ import { KitsScreen } from './screens/Kits'
 import { MatchesScreen } from './screens/Matches'
 import { TheoryScreen } from './screens/Theory'
 import { ChromosomesScreen } from './screens/Chromosomes'
+import { GedmatchScreen } from './screens/Gedmatch'
 import { ExtensionGrantBanner, ExtensionRequestDialog, ExtensionScreen } from './screens/Extension'
 import { createStandIns } from './standins'
 import { ErrorBox, Icon, NamesContext, useNames } from './ui'
 
-type Screen = 'kits' | 'matches' | 'chromosomes' | 'theory' | 'network' | 'backups' | 'extension'
+type Screen = 'kits' | 'matches' | 'chromosomes' | 'gedmatch' | 'theory' | 'network' | 'backups' | 'extension'
 const SCREENS: { id: Screen; label: string; icon: typeof Users }[] = [
   { id: 'kits', label: 'Kits', icon: Users },
   { id: 'matches', label: 'Matches', icon: Table2 },
   { id: 'chromosomes', label: 'Chromosomes', icon: AlignLeft },
+  { id: 'gedmatch', label: 'GEDmatch', icon: Upload },
   { id: 'theory', label: 'Theory', icon: GitBranch },
   { id: 'network', label: 'DNA network', icon: Network },
   { id: 'backups', label: 'Backups', icon: HardDrive },
@@ -277,6 +279,7 @@ function Main(props: {
       {needsKits && hasKits && screen === 'kits' && (kits ? <KitsScreen data={kits} /> : !error && <p>Reading kits…</p>)}
       {needsKits && hasKits && screen === 'matches' && (kits ? <MatchesScreen kits={kits.kits} /> : !error && <p>Reading kits…</p>)}
       {needsKits && hasKits && screen === 'chromosomes' && (kits ? <ChromosomesScreen kits={kits.kits} /> : !error && <p>Reading kits…</p>)}
+      {needsKits && hasKits && screen === 'gedmatch' && <GedmatchScreen />}
       {needsKits && hasKits && screen === 'theory' && (theory === undefined ? !error && <p>Reading…</p> : <TheoryScreen theory={theory} onTheory={setTheory} dark={props.dark} />)}    </main>
   )
 }

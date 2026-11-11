@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- GEDmatch checklist, 2026-11-10: a GEDmatch screen lists the family kits, recommends uploading those with raw DNA, and guides the upload on GEDmatch's own site. It records each kit number and its privacy setting in the decisions log. Opt-in to law-enforcement matching is flagged. A minor's kit needs a second confirmation that a parent or guardian chose it, and Private is recommended. The app never uploads.
+
 - Due notices, 2026-11-10: in the Mac app, when work is due, a native notification shows the counts-only text, at most once a day. The app asks macOS for permission first. Nothing is emailed.
 
 - Label batches, 2026-11-10: the Extension screen proposes a label batch from the kit's DNA groups ("OL G1" and so on), shows how many matches each label covers, and applies it to the mock site only after you tick that you've reviewed it. An applied batch is recorded in the decisions log, with counts and labels and no names. Real services are refused by the terms register.
