@@ -17,7 +17,7 @@ DNA-first genetic genealogy for Mac. OneLineage groups your DNA matches before y
 - OneLineage for Mac, v0: runs on a made-up demo family. It's been built and opened locally, not released, and needs Node 22.13 or later on the Mac for now (ADR 0007).
 - the Chrome extension the app collects with (`apps/extension`, ADR 0009). It stores nothing, talks to the app only through Chrome's native messaging, and asks for your OK in the app. It only works with a local mock site: every DNA service's terms say no to automated page visits. It's been tested with Vitest against the mock site, and hasn't been loaded into Chrome yet.
 
-238 tests pass locally. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
+242 tests pass locally. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
 
 ## What it will do
 

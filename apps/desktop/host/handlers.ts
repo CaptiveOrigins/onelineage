@@ -8,10 +8,10 @@ import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSyn
 import { DatabaseSync } from 'node:sqlite'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { BlindGate, compareKits, ONE_CM_PER_MB, sha256Hex, TermsRegister, type Unblinding } from '@captiveorigins/onelineage-core'
-import { importGenealogyAssistant, importRawDna, type ImportResult, type RawImport } from '@captiveorigins/onelineage-connectors'
+import { importCollectedPages, importGenealogyAssistant, importRawDna, type ImportResult, type RawImport } from '@captiveorigins/onelineage-connectors'
 import {
   appendDecision, backupTo, backupVerdict, canLowerBypass, checkBackup, decisionsPath, initLibrary, isCloudSynced, listFiles, openLibrary,
-  buildCache, cacheDigest, readDecisions, type BypassLevel, type Decision,
+  buildCache, cacheDigest, readDecisions, storeExport, type BypassLevel, type Decision,
 } from '@captiveorigins/onelineage-library'
 import type { PedigreeDocument } from '@captiveorigins/onepedigree-core'
 import { withCandidateFathers, type TreePerson } from '../src/pedigree'
@@ -30,7 +30,7 @@ export { defaultStateDir } from './state'
 
 /** Who a decision is recorded as made by. The app has one person at the keyboard and no accounts. */
 const BY = 'user'
-const EXPORT_DIR = /^(\d{4}-\d{2}-\d{2}) planted (.+)$/
+const EXPORT_DIR = /^(\d{4}-\d{2}-\d{2}) (planted|mocksite) (.+)$/
 const LIST_FILE = /^(.*) - DNA Matches - Test ([0-9A-F-]{36})(?: \(\d+\))?\.csv$/
 /** Real services aren't readable in v0: an empty register refuses them all. Planted data is exempt from terms, never from blindness. */
 const NO_TERMS = new TermsRegister([])
@@ -83,7 +83,7 @@ export function createHost(opts: {
       .sort()
       .flatMap((name) => {
         const m = EXPORT_DIR.exec(name)
-        return m ? [{ folder: join(root, name), date: m[1] as string, label: m[2] as string }] : []
+        return m ? [{ folder: join(root, name), date: m[1] as string, service: m[2] as string, label: m[3] as string }] : []
       })
   }
   const readExport = (folder: string): Record<string, Uint8Array> =>
@@ -137,6 +137,14 @@ export function createHost(opts: {
         if (file && bytes) raw = await importRawDna({ file, bytes, terms: NO_TERMS, source: 'planted' })
       }
       kits.push({ result, name, exportDate: e.date, sharedFiles: Object.keys(files).filter((n) => n.startsWith('Shared Matches/')).length, raw })
+    }
+    for (const e of folders.filter((f) => f.label.startsWith('collected '))) {
+      const kitId = e.label.split(' ')[1] ?? ''
+      const k = kits.find((x) => x.result.kit === kitId)
+      if (!k) continue
+      const obs = await importCollectedPages({ site: e.service, kit: kitId, files: readExport(e.folder), terms: NO_TERMS })
+      const have = new Set(k.result.observations.map((o) => o.match))
+      k.result.observations.push(...obs.filter((o) => !have.has(o.match)))
     }
     const treeFolder = folders.find((f) => f.label.startsWith('own tree '))
     const ownTree = treeFolder
@@ -228,10 +236,10 @@ export function createHost(opts: {
   const ready = readDeveloperIds().catch(() => [])
 
   /** Collected in this session only, in memory. Writing collected pages into the library comes later. */
-  const collected = new Map<string, { listed: Set<string>; fetched: Set<string> }>()
+  const collected = new Map<string, { listed: Set<string>; fetched: Set<string>; pages: Record<string, unknown>[] }>()
   const collectedFor = (kit: string) => {
     let c = collected.get(kit)
-    if (!c) collected.set(kit, (c = { listed: new Set(), fetched: new Set() }))
+    if (!c) collected.set(kit, (c = { listed: new Set(), fetched: new Set(), pages: [] }))
     return c
   }
   const libraryMatchIds = async (kit: string): Promise<Set<string>> => {
@@ -256,8 +264,21 @@ export function createHost(opts: {
         for (const m of page.data['matches'] as { id?: unknown }[]) if (typeof m?.id === 'string') c.listed.add(m.id)
       if (page.kind === 'match') {
         const id = (page.data['match'] as { id?: unknown } | undefined)?.id
-        if (typeof id === 'string') c.fetched.add(id)
+        if (typeof id === 'string') { c.fetched.add(id); c.pages.push(page.data) }
       }
+    },
+    /** When a run ends, its match pages become a frozen export in the library, read back through the importer's checks. */
+    async runEnded(kit, site) {
+      const c = collectedFor(kit)
+      if (!c.pages.length) return
+      const pages = c.pages
+      c.pages = []
+      const lib = current()
+      const t = now()
+      const files = Object.fromEntries(pages.map((p, i) => [`pages/${String(i + 1).padStart(4, '0')}.json`, new TextEncoder().encode(JSON.stringify(p, null, 2) + '\n')]))
+      await importCollectedPages({ site, kit, files, terms: NO_TERMS })
+      await storeExport(lib, { date: t.toISOString().slice(0, 10), service: site, label: `collected ${kit} ${t.toISOString().slice(11, 19).replace(/:/g, '')}`, files })
+      loaded.delete(lib)
     },
     async newMatches(kit, limit) {
       const c = collectedFor(kit)

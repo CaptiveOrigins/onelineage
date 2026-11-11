@@ -137,6 +137,27 @@ describe('the cache', () => {
   })
 })
 
+describe('pages the extension collected', () => {
+  it('become a frozen export, and join the kit’s matches on the next load', async () => {
+    const { root, h } = setup()
+    await h.chooseLibrary({ path: join(root, 'lib') })
+    const s = await h.openDemo({ seed: 1 })
+    const { kits } = await h.kits({})
+    const kit = kits[0]!.kit
+    const before = (await h.matches({ kit })).length
+    const { storeExport } = await import('@captiveorigins/onelineage-library')
+    const enc = new TextEncoder()
+    await storeExport(s.current!.path, { date: '2026-11-10', service: 'mocksite', label: `collected ${kit} 120000`, files: {
+      'pages/0001.json': enc.encode(JSON.stringify({ kind: 'match', kit, match: { id: 'NEW-000001', name: 'Made Up Newcomer', sharedCm: 33, segments: 2, longestCm: 20 } })),
+    } })
+    // A fresh host reads the library again.
+    const again = createHost({ stateDir: join(root, 'state'), now: () => T0 }).handlers
+    const rows = await again.matches({ kit })
+    expect(rows.length).toBe(before + 1)
+    expect(rows.some((r) => r.match === 'NEW-000001')).toBe(true)
+  })
+})
+
 describe('privacy names', () => {
   it('keeps one stand-in map per library, reserves its real words, and saves new pairings', async () => {
     const { root, h } = setup()

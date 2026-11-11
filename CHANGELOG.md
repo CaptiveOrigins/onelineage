@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Collected pages into the library, 2026-11-10: when a collecting run ends, for any reason, the extension's match pages are checked by a new importer (`importCollectedPages`) and stored as a frozen export, `<date> mocksite collected <kit> <time>`. On the next load they join the kit's matches. Only the made-up mock site is allowed; real services are refused by the terms register.
+
 - The app's cache, 2026-11-10: each library's SQLite cache is built in the app's own folder from the library's stored exports, read through the importers with their checks, on every load. A `cacheCheck` request rebuilds it in memory, compares digests (S11), and replaces the file on disk if they differ.
 
 - Chrome extension, 2026-11-10: `apps/extension` is the collector the Mac app uses (ADR 0009). It's a Manifest V3 extension with a service worker, a side panel and a toolbar button.

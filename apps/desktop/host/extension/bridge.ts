@@ -78,6 +78,8 @@ export type ExtensionData = {
   matchSummary(kit: string, match: string, privacy: boolean): Promise<MatchSummary | null>
   acceptPage(kit: string, site: string, page: { kind: 'match-list' | 'match'; data: Record<string, unknown> }): Promise<void>
   newMatches(kit: string, limit: number): Promise<string[]>
+  /** Called once when a collecting run ends, for any reason. */
+  runEnded?(kit: string, site: string): Promise<void>
 }
 
 export type BridgeOptions = {
@@ -237,6 +239,7 @@ export function createExtensionBridge(opts: BridgeOptions) {
 
   function stopRunWith(reason: StopReason, detail: string | null) {
     if (!run || run.state !== 'running') return
+    if (run.kind === 'collect') void opts.data.runEnded?.(run.kit, run.site).catch((e: Error) => console.error(`Collected pages were not stored: ${e.message}`))
     run.state = 'stopped'
     run.reason = reason
     run.detail = detail

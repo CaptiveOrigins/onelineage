@@ -39,6 +39,7 @@ function setup(o: { ids?: string[]; data?: Partial<ExtensionData> } = {}) {
       matchSummary: async (kit, match) => (calls.push(`summary ${kit} ${match}`), { match, line: 'Mother’s side', confidence: 'low', theories: ['Theory A'], extra: 'never sent' } as never),
       acceptPage: async (kit, _site, page) => void calls.push(`page ${kit} ${page.kind}`),
       newMatches: async (kit, limit) => (calls.push(`new ${kit}`), ['m1', 'm2', 'm3'].slice(0, limit)),
+      runEnded: async (kit, site) => void calls.push(`ended ${kit} ${site}`),
       ...o.data,
     },
     log: (e) => log.push(e),
@@ -263,7 +264,7 @@ describe('the terms gate', () => {
 
 describe('runs started in the app', () => {
   it('covers fetching for that run only, counts pages towards the daily cap, and stops at it', async () => {
-    const { bridge, conn, sent, pages } = setup()
+    const { bridge, conn, sent, pages, calls } = setup()
     const c = conn()
     expect(() => bridge.startRun({ kit: 'K', site: MOCK_SITE, origin: MOCK, maxPages: 2 })).not.toThrow()
     const start = sent.at(-1) as Extract<AppMessage, { command: 'startRun' }>
@@ -283,6 +284,8 @@ describe('runs started in the app', () => {
     expect(sent.at(-1)).toMatchObject({ id: 'p2', ok: false })
     await c.receive({ type: 'runReport', runId: start.runId, state: 'stopped', reason: 'challenge', pages: 1, detail: 'challenge seen' })
     expect(bridge.status().run).toMatchObject({ state: 'stopped', reason: 'challenge' })
+    // The app is told once, so the run's pages can be stored in the library.
+    expect(calls.filter((x) => x.startsWith('ended '))).toEqual([`ended K ${MOCK_SITE}`])
     expect(bridge.status().grants).toEqual([])
     await c.receive(page('p3'))
     expect(sent.at(-1)).toMatchObject({ id: 'p3', ok: false, error: 'That run has ended.' })

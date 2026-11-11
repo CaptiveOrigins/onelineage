@@ -32,4 +32,4 @@ export class BlindGate {
 }
 
 /** Sources that are made up on purpose (planted test families). They're exempt from service terms, never from blindness. */
-export const SYNTHETIC_SOURCES: ReadonlySet<string> = new Set(['planted'])
+export const SYNTHETIC_SOURCES: ReadonlySet<string> = new Set(['planted', 'mocksite'])
