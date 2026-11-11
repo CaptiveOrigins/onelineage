@@ -11,7 +11,7 @@ import { TheoryScreen } from './screens/Theory'
 import { ChromosomesScreen } from './screens/Chromosomes'
 import { ExtensionGrantBanner, ExtensionRequestDialog, ExtensionScreen } from './screens/Extension'
 import { createStandIns } from './standins'
-import { ErrorBox, Icon, NamesContext } from './ui'
+import { ErrorBox, Icon, NamesContext, useNames } from './ui'
 
 type Screen = 'kits' | 'matches' | 'chromosomes' | 'theory' | 'network' | 'backups' | 'extension'
 const SCREENS: { id: Screen; label: string; icon: typeof Users }[] = [
@@ -248,6 +248,7 @@ function Main(props: {
         </div>
       )}
       <ExtensionGrantBanner view={props.ext} onView={props.onExt} />
+      <DueBanner hasKits={(status.current?.kits ?? 0) > 0} path={status.current?.path} />
       <h1 ref={heading} tabIndex={-1}>
         {title}
       </h1>
@@ -277,5 +278,22 @@ function Main(props: {
       {needsKits && hasKits && screen === 'matches' && (kits ? <MatchesScreen kits={kits.kits} /> : !error && <p>Reading kits…</p>)}
       {needsKits && hasKits && screen === 'chromosomes' && (kits ? <ChromosomesScreen kits={kits.kits} /> : !error && <p>Reading kits…</p>)}
       {needsKits && hasKits && screen === 'theory' && (theory === undefined ? !error && <p>Reading…</p> : <TheoryScreen theory={theory} onTheory={setTheory} dark={props.dark} />)}    </main>
+  )
+}
+
+/** What's due (a check every 13 weeks, a full rerun yearly), as a quiet line. It never blocks work. */
+function DueBanner({ hasKits, path }: { hasKits: boolean; path: string | undefined }) {
+  const [due, setDue] = useState<{ items: { kit: string; label: string; kind: string; dueOn: string; reason: string }[] } | null>(null)
+  const { show } = useNames()
+  useEffect(() => {
+    setDue(null)
+    if (hasKits) call('due').then(setDue, () => setDue(null))
+  }, [hasKits, path])
+  if (!due || due.items.length === 0) return null
+  return (
+    <div className="ol-banner" role="status">
+      <strong>Due:</strong>{' '}
+      {due.items.map((i) => `${show(i.label)}: ${i.kind === 'check' ? 'match-list check' : 'yearly rerun'} since ${i.dueOn}`).join('; ')}.
+    </div>
   )
 }

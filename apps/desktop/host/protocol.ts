@@ -152,6 +152,8 @@ export type HostApi = {
   privacyNames: { params: Record<string, never>; result: { salt: string; known: Record<string, string>; reserved: string[] } }
   /** Save new stand-in pairings, so they stay the same next time. */
   addPrivacyNames: { params: { pairs: Record<string, string> }; result: { saved: number } }
+  /** What's due now: checks and reruns, with a counts-only message for a notification or email. */
+  due: { params: Record<string, never>; result: { items: { kit: string; label: string; kind: 'check' | 'rerun'; dueOn: string; overdueDays: number; reason: string }[]; message: string | null } }
   /** The kit's DNA groups, worked out from DNA figures alone (neutral IDs until unblinding). */
   groups: { params: { kit: string }; result: { kit: string; engine: string; grouped: number; excluded: number; groups: { group: string; size: number; sides: string[] }[] } }
   /** S11: rebuild the cache from the library and compare. If they differ, the cache on disk is replaced. */

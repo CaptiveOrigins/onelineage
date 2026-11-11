@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- What's due, 2026-11-10: `dueItems` applies the owner's schedule (a match-list check every 13 weeks, a full rerun yearly), and `dueMessage` writes the counts-only text for a notification or email, with no names, cM or DNA details. The app shows a quiet "Due" line and never blocks work. Native Mac notifications and the email aren't built yet.
+
 - DNA groups in the app, 2026-11-10: the host groups each kit's matches with the analysis package (ADR 0006), once per load. The extension's side-panel summary now gives the match's side, its neutral group ID and split, and how sure the grouping is (Strong, Moderate or Weak, from run agreement), or why it isn't grouped. A `groups` request lists group sizes and sides. Summaries carry no names.
 
 - Collected pages into the library, 2026-11-10: when a collecting run ends, for any reason, the extension's match pages are checked by a new importer (`importCollectedPages`) and stored as a frozen export, `<date> mocksite collected <kit> <time>`. On the next load they join the kit's matches. Only the made-up mock site is allowed; real services are refused by the terms register.

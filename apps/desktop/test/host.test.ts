@@ -135,6 +135,22 @@ describe('DNA groups in the app', () => {
   })
 })
 
+describe('what is due', () => {
+  it('lists a check and a rerun once enough time has passed, with a counts-only message', async () => {
+    const { root, h } = setup()
+    await h.chooseLibrary({ path: join(root, 'lib') })
+    await h.openDemo({ seed: 1 })
+    const today = await h.due({})
+    expect(today.items).toEqual([])
+    expect(today.message).toBeNull()
+    const later = createHost({ stateDir: join(root, 'state'), now: () => new Date(T0.getTime() + 400 * 86400000) }).handlers
+    const due = await later.due({})
+    expect(due.items.filter((i) => i.kind === 'check')).toHaveLength(2)
+    expect(due.message).toMatch(/^OneLineage: 2 kits due for a match-list check and 2 due for a yearly rerun\./)
+    for (const i of due.items) expect(due.message).not.toContain(i.label)
+  })
+})
+
 describe('the cache', () => {
   it('is built in the app folder from the library, and a check rebuilds it when it drifts (S11)', async () => {
     const { root, h } = setup()

@@ -12,7 +12,7 @@ import { clusterKit, type ClusterRun } from '@captiveorigins/onelineage-analysis
 import { importCollectedPages, importGenealogyAssistant, importRawDna, type ImportResult, type RawImport } from '@captiveorigins/onelineage-connectors'
 import {
   appendDecision, backupTo, backupVerdict, canLowerBypass, checkBackup, decisionsPath, initLibrary, isCloudSynced, listFiles, openLibrary,
-  buildCache, cacheDigest, readDecisions, storeExport, type BypassLevel, type Decision,
+  buildCache, cacheDigest, dueItems, dueMessage, readDecisions, storeExport, type BypassLevel, type Decision,
 } from '@captiveorigins/onelineage-library'
 import type { PedigreeDocument } from '@captiveorigins/onepedigree-core'
 import { withCandidateFathers, type TreePerson } from '../src/pedigree'
@@ -535,6 +535,18 @@ export function createHost(opts: {
     },
 
     /** S11: rebuild from the library in memory and compare with the cache on disk. */
+    /** What's due, by the owner's schedule: a check every 13 weeks, a full rerun yearly. Counts-only message included. */
+    async due() {
+      const lib = current()
+      const data = await load(lib)
+      const folders = exportFolders(lib)
+      const items = dueItems(data.kits.map((k) => {
+        const mine = folders.filter((f) => f.label.endsWith(k.name) || f.label.includes(k.result.kit)).map((f) => f.date).sort()
+        return { kit: k.result.kit, label: k.name, lastExport: mine[mine.length - 1] ?? k.exportDate, lastFullRun: null }
+      }), now())
+      return { items, message: dueMessage(items) }
+    },
+
     async groups({ kit }) {
       const k = (await load(current())).kits.find((x) => x.result.kit === kit)
       if (!k) throw new HostError('That kit isn’t in this library.')
