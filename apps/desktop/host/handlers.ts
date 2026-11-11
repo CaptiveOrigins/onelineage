@@ -547,6 +547,16 @@ export function createHost(opts: {
       return { items, message: dueMessage(items) }
     },
 
+    /** At most once a day: whether to show a due notice now, and its counts-only text. Claiming it records the day. */
+    async claimDueNotice() {
+      const { message } = await handlers.due({})
+      const today = now().toISOString().slice(0, 10)
+      const s = state()
+      if (!message || s.lastDueNotice === today) return { notify: false, message: null }
+      save({ ...s, lastDueNotice: today })
+      return { notify: true, message }
+    },
+
     async groups({ kit }) {
       const k = (await load(current())).kits.find((x) => x.result.kit === kit)
       if (!k) throw new HostError('That kit isn’t in this library.')

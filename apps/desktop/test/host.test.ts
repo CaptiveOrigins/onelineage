@@ -163,6 +163,10 @@ describe('what is due', () => {
     expect(due.items.filter((i) => i.kind === 'check')).toHaveLength(2)
     expect(due.message).toMatch(/^OneLineage: 2 kits due for a match-list check and 2 due for a yearly rerun\./)
     for (const i of due.items) expect(due.message).not.toContain(i.label)
+    // A native notice at most once a day.
+    expect((await later.claimDueNotice({})).notify).toBe(true)
+    expect((await later.claimDueNotice({})).notify).toBe(false)
+    expect((await h.claimDueNotice({})).notify).toBe(false)
   })
 })
 

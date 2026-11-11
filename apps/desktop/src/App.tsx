@@ -1,7 +1,7 @@
 import { AlignLeft, Dna, Eye, EyeOff, GitBranch, HardDrive, Network, Puzzle, Settings, Table2, Users } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { BackupState, ExtensionView, KitsResult, Status, TheoryResult } from '../host/protocol'
-import { call } from './api'
+import { call, inMacApp } from './api'
 import { firstLaunchStep, flowInputs } from './flow'
 import { BackupsScreen, Verdict } from './screens/Backups'
 import { FirstLaunch } from './screens/FirstLaunch'
@@ -287,7 +287,10 @@ function DueBanner({ hasKits, path }: { hasKits: boolean; path: string | undefin
   const { show } = useNames()
   useEffect(() => {
     setDue(null)
-    if (hasKits) call('due').then(setDue, () => setDue(null))
+    if (!hasKits) return
+    call('due').then(setDue, () => setDue(null))
+    // In the Mac app, a native notification at most once a day. Its text is counts only: no names or DNA details.
+    if (inMacApp) void notifyDue()
   }, [hasKits, path])
   if (!due || due.items.length === 0) return null
   return (
@@ -296,4 +299,13 @@ function DueBanner({ hasKits, path }: { hasKits: boolean; path: string | undefin
       {due.items.map((i) => `${show(i.label)}: ${i.kind === 'check' ? 'match-list check' : 'yearly rerun'} since ${i.dueOn}`).join('; ')}.
     </div>
   )
+}
+
+async function notifyDue() {
+  const claim = await call('claimDueNotice').catch(() => null)
+  if (!claim?.notify || !claim.message) return
+  const n = await import('@tauri-apps/plugin-notification')
+  let ok = await n.isPermissionGranted()
+  if (!ok) ok = (await n.requestPermission()) === 'granted'
+  if (ok) n.sendNotification({ title: 'OneLineage', body: claim.message })
 }

@@ -123,6 +123,7 @@ async fn host_call(app: tauri::AppHandle, host: State<'_, Host>, method: String,
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_notification::init())
         .manage(Host::default())
         .invoke_handler(tauri::generate_handler![host_call])
         .build(tauri::generate_context!())

@@ -154,6 +154,8 @@ export type HostApi = {
   addPrivacyNames: { params: { pairs: Record<string, string> }; result: { saved: number } }
   /** What's due now: checks and reruns, with a counts-only message for a notification or email. */
   due: { params: Record<string, never>; result: { items: { kit: string; label: string; kind: 'check' | 'rerun'; dueOn: string; overdueDays: number; reason: string }[]; message: string | null } }
+  /** Whether to show a due notice now (at most once a day), with its counts-only text. */
+  claimDueNotice: { params: Record<string, never>; result: { notify: boolean; message: string | null } }
   /** The kit's DNA groups, worked out from DNA figures alone (neutral IDs until unblinding). */
   groups: { params: { kit: string }; result: { kit: string; engine: string; grouped: number; excluded: number; groups: { group: string; size: number; sides: string[] }[] } }
   /** S11: rebuild the cache from the library and compare. If they differ, the cache on disk is replaced. */

@@ -16,6 +16,8 @@ export type AppState = {
   destinations: Record<string, string[]>
   /** Pages the extension visited per day (YYYY-MM-DD), for the daily cap. Counts only, nothing about the pages. */
   extensionPages?: Record<string, number>
+  /** The day (YYYY-MM-DD) a due notice was last shown, so it's at most once a day. */
+  lastDueNotice?: string
 }
 
 const EMPTY: AppState = { version: 1, home: null, demo: null, current: null, destinations: {} }
