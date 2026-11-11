@@ -99,11 +99,11 @@ export type TheoryResult =
       recorded: PedigreeDocument
       /** The person the planted question is about, and the two candidate fathers. */
       question: { child: string; recordedFather: string; biologicalFather: string }
-      /** The recorded tree plus the candidate fathers, in OnePedigree's uncertainParents shape (0.1.0-alpha.20 and later). */
+      /** The recorded tree plus the candidate fathers, in OnePedigree's uncertainParents shape (OneLineage will use it from 0.1.0-alpha.21). */
       theory: TheoryDocument
     }
 
-/** OnePedigree's uncertain parent slot, as released in 0.1.0-alpha.20. Written here until that release is on npm. */
+/** OnePedigree's uncertain parent slot, as in OnePedigree 0.1.0-alpha.21. Written here until that release is on npm. */
 export type UncertainParentSlot = { role: string | null; candidates: { individual: string; probability: number }[] }
 export type TheoryDocument = {
   schemaVersion: 1
