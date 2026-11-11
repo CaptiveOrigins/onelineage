@@ -46,6 +46,21 @@ describe('the library folder', () => {
   })
 })
 
+describe('frozen exports, missing and extra files (test audit 2026-11-10)', () => {
+  it('reports a stored file that was removed, and one that was added', async () => {
+    const dir = await sampleLibrary()
+    const folder = join(dir, 'exports', '2026-11-10 planted kit A')
+    chmodSync(folder, 0o755)
+    const { rmSync } = await import('node:fs')
+    chmodSync(join(folder, 'list.csv'), 0o644)
+    rmSync(join(folder, 'list.csv'))
+    writeFileSync(join(folder, 'extra.csv'), 'x')
+    const problems = await verifyExports(dir)
+    expect(problems.some((p) => /list\.csv: missing/.test(p))).toBe(true)
+    expect(problems.some((p) => /extra\.csv: not in the manifest/.test(p))).toBe(true)
+  })
+})
+
 describe('the decisions log', () => {
   it('chains entries and reads them back', async () => {
     const path = join(tmp(), 'decisions.jsonl')

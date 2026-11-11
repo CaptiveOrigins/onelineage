@@ -17,6 +17,10 @@ describe('when kits are due', () => {
     expect(msg).toBe('OneLineage: 1 kit due for a match-list check and 1 due for a yearly rerun. Open the app to see which.')
     expect(msg).not.toContain('Secret')
   })
+  it('a recent full run means no rerun is due, even if the export is old (test audit 2026-11-10)', () => {
+    const items = dueItems([{ kit: 'A', label: 'A', lastExport: '2026-01-01', lastFullRun: '2026-10-01' }], now)
+    expect(items.map((i) => i.kind)).toEqual(['check'])
+  })
   it('refuses a date it can’t read', () => {
     expect(() => dueItems([{ kit: 'A', label: 'A', lastExport: 'soon', lastFullRun: null }], now)).toThrow(/isn't a date/)
   })
