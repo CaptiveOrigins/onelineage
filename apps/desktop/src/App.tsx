@@ -9,7 +9,7 @@ import { KitsScreen } from './screens/Kits'
 import { MatchesScreen } from './screens/Matches'
 import { TheoryScreen } from './screens/Theory'
 import { ChromosomesScreen } from './screens/Chromosomes'
-import { createStandIns, sessionSalt } from './standins'
+import { createStandIns } from './standins'
 import { ErrorBox, Icon, NamesContext } from './ui'
 
 type Screen = 'kits' | 'matches' | 'chromosomes' | 'theory' | 'network' | 'backups'
@@ -49,9 +49,37 @@ export function App() {
   const [appearance, setAppearance, dark] = useAppearance()
   const settings = useRef<HTMLDialogElement>(null)
 
-  // One salt per session: stand-ins stay the same while the app is open, and differ next time.
-  const standIns = useMemo(() => createStandIns(sessionSalt()), [])
-  const names = useMemo(() => ({ privacy, show: privacy ? standIns.name : (n: string) => n }), [privacy, standIns])
+  // Stand-ins come from the library's saved map, so every recording shows the same made-up names.
+  // New pairings are saved back in small batches. Until the map loads, privacy shows nothing rather than a real name.
+  const [standIns, setStandIns] = useState<ReturnType<typeof createStandIns> | null>(null)
+  const libraryPath = status?.current?.path
+  useEffect(() => {
+    setStandIns(null)
+    if (!libraryPath) return
+    let pending: Record<string, string> = {}
+    let timer: ReturnType<typeof setTimeout> | null = null
+    const flush = () => {
+      const pairs = pending
+      pending = {}
+      timer = null
+      if (Object.keys(pairs).length) call('addPrivacyNames', { pairs }).catch((e: Error) => setError(e.message))
+    }
+    call('privacyNames').then(
+      (p) => setStandIns(createStandIns(p.salt, { known: p.known, reserved: p.reserved, onNew: (w, st) => { pending[w] = st; timer ??= setTimeout(flush, 500) } })),
+      (e: Error) => setError(e.message),
+    )
+    return () => { if (timer) { clearTimeout(timer); flush() } }
+  }, [libraryPath])
+  const names = useMemo(() => ({ privacy, show: privacy ? (n: string) => (standIns ? standIns.name(n) : '…') : (n: string) => n }), [privacy, standIns])
+
+  // Cmd+Shift+P (Ctrl+Shift+P elsewhere) flips privacy from anywhere, without hunting for the button.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'p') { e.preventDefault(); setPrivacy((v) => !v) }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   const refresh = useCallback(async (s?: Status) => {
     try {
@@ -113,7 +141,7 @@ export function App() {
               <Icon of={EyeOff} size={14} /> Privacy on
             </span>
           )}
-          <button type="button" aria-pressed={privacy} onClick={() => setPrivacy(!privacy)} title="Show stand-in names instead of real ones, in every view">
+          <button type="button" aria-pressed={privacy} onClick={() => setPrivacy(!privacy)} title="Show stand-in names instead of real ones, in every view (⌘⇧P)" aria-keyshortcuts="Meta+Shift+P">
             <Icon of={privacy ? EyeOff : Eye} /> Privacy
           </button>
           <button type="button" onClick={() => settings.current?.showModal()}>

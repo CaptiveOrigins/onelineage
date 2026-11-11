@@ -47,10 +47,60 @@ export type StandIns = {
   name: (text: string) => string
 }
 
-/** A consistent set of stand-ins. The same word (ignoring case) always gets the same stand-in. */
-export function createStandIns(salt: string): StandIns {
+/** Endings and beginnings kept as they are, so a stand-in keeps the original's kind of name. */
+const SUFFIXES = ['sdotter', 'dotter', 'sdatter', 'datter', 'sson', 'son', 'sen', 'ovich', 'ova', 'ez'] as const
+// Only joined-on prefixes. Separate words such as "van", "de" and "St" get their own stand-ins.
+const PREFIXES = ['mac', 'mc', 'fitz'] as const
+
+/** Split a lower-case word into a kept prefix, a core to replace, and a kept suffix. */
+export function splitStyle(word: string): { prefix: string; core: string; suffix: string } {
+  let w = word
+  let prefix = ''
+  let suffix = ''
+  for (const p of PREFIXES) if (w.startsWith(p) && w.length - p.length >= 3) { prefix = p; w = w.slice(p.length); break }
+  for (const x of SUFFIXES) if (w.endsWith(x) && w.length - x.length >= 3) { suffix = x; w = w.slice(0, -x.length); break }
+  return { prefix, core: w, suffix }
+}
+
+/**
+ * A rough sound-alike key, so spellings of one name (invented examples: Vellén and Velleen, Garrick and Garick) share a stand-in
+ * root. Accents are dropped, prefixes and suffixes ignored, vowels after the first letter dropped, and
+ * similar consonants merged.
+ */
+export function variantKey(word: string): string {
+  const plain = word.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  const { core } = splitStyle(plain)
+  const c = core.replace(/ph/g, 'f').replace(/[ckq]/g, 'k').replace(/[sz]/g, 's').replace(/[dt]/g, 't').replace(/[bp]/g, 'p').replace(/[gj]/g, 'g').replace(/[mn]/g, 'n').replace(/w/g, 'v')
+  const tail = c.slice(1).replace(/[aeiouyh]/g, '').replace(/(.)\1+/g, '$1')
+  return (c[0] ?? '') + tail
+}
+
+export type StandInOptions = {
+  /** Stand-ins already given in this library: word → stand-in. They're kept as they are. */
+  known?: Readonly<Record<string, string>>
+  /** Real words in this library. A stand-in is never one of them. */
+  reserved?: Iterable<string>
+  /** Called once for each new pairing, so it can be saved and reused next time. */
+  onNew?: (word: string, standIn: string) => void
+}
+
+/**
+ * A consistent set of stand-ins. The same word (ignoring case) always gets the same stand-in. With `known`
+ * from the library, that holds across sessions and recordings too. Spelling variants share a root.
+ */
+export function createStandIns(salt: string, opts: StandInOptions = {}): StandIns {
   const forward = new Map<string, string>()
   const taken = new Map<string, string>()
+  const reserved = new Set([...(opts.reserved ?? [])].map((w) => w.toLowerCase()))
+  for (const [w, s] of Object.entries(opts.known ?? {})) { forward.set(w.toLowerCase(), s.toLowerCase()); taken.set(s.toLowerCase(), w.toLowerCase()) }
+  const styled = (key: string, attempt: number) => {
+    const { prefix, core, suffix } = splitStyle(key)
+    if (!core) return standInCandidate(key, salt, attempt).toLowerCase()
+    // Root from the sound-alike group, so variants look related; ending from the word itself.
+    const root = standInCandidate(variantKey(key) || key, salt, 0).toLowerCase().slice(0, 4)
+    const tail = standInCandidate(key, salt, attempt + 1).toLowerCase().slice(-3)
+    return prefix + (suffix ? root : root + tail) + suffix
+  }
   const word = (w: string) => {
     const key = w.toLowerCase()
     let s = forward.get(key)
@@ -61,10 +111,10 @@ export function createStandIns(salt: string): StandIns {
     }
     if (!s) {
       for (let attempt = 0; ; attempt++) {
-        const c = standInCandidate(key, salt, attempt).toLowerCase()
+        const c = attempt < 50 ? styled(key, attempt) : standInCandidate(key, salt, attempt).toLowerCase()
         const owner = taken.get(c)
-        // Never the word itself, and never a stand-in another word already has.
-        if (c !== key && (owner === undefined || owner === key)) {
+        // Never the word itself, never a real word in this library, and never a stand-in another word already has.
+        if (c !== key && !reserved.has(c) && (owner === undefined || owner === key)) {
           s = c
           break
         }
@@ -72,10 +122,12 @@ export function createStandIns(salt: string): StandIns {
       }
       forward.set(key, s)
       taken.set(s, key)
+      opts.onNew?.(key, s)
     }
     return matchCase(w, s)
   }
-  return { word, name: (text) => text.replace(/\p{L}+/gu, (w) => word(w)) }
+  // "O'" before a surname is kept as it is, like other prefixes.
+  return { word, name: (text) => text.replace(/(?<!\p{L})(O['’])?(\p{L}+)/gu, (_m, o: string | undefined, w: string) => (o ?? '') + word(w)) }
 }
 
 /** A fresh random salt for one session. */

@@ -118,6 +118,22 @@ describe('first launch, on the host', () => {
   })
 })
 
+describe('privacy names', () => {
+  it('keeps one stand-in map per library, reserves its real words, and saves new pairings', async () => {
+    const { root, h } = setup()
+    await h.chooseLibrary({ path: join(root, 'lib') })
+    await h.openDemo({ seed: 1 })
+    const first = await h.privacyNames({})
+    expect(first.salt).toMatch(/^[0-9a-f]{32}$/)
+    expect(first.reserved.length).toBeGreaterThan(10)
+    expect(await h.addPrivacyNames({ pairs: { tennick: 'corathmor' } })).toEqual({ saved: 1 })
+    const again = await h.privacyNames({})
+    expect(again.salt).toBe(first.salt)
+    expect(again.known).toEqual({ tennick: 'corathmor' })
+    await expect(h.addPrivacyNames({ pairs: { 'not a word': 'x1' } })).rejects.toThrow(/pair of words/)
+  })
+})
+
 describe('the demo family', () => {
   it('opens in its own library, with kits, matches and a blind theory page until unblinded', async () => {
     const { root, h } = setup()

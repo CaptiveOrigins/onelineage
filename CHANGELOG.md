@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Privacy mode, 2026-11-10: stand-ins come from a map saved in the library (`privacy-names.json`), so every recording shows the same made-up names. A stand-in is never a real word in the library. Stand-ins keep patronymic endings (-sdotter, -sson) and joined prefixes (Mc, Mac, O'), and spelling variants share a root. ⌘⇧P flips privacy from anywhere. While the map loads, privacy shows nothing rather than a real name.
+
 - Keychain backup keys, 2026-11-10: the Mac app keeps one random 32-byte backup key per library in the macOS Keychain, through Apple's `security` tool, and never passes a shell. It's created when first needed, read back before use, and stored under a hashed account so no folder names reach the Keychain. A recovery copy can be shown on request. Backups to cloud-synced folders now work, encrypted on this Mac. Limit: the Keychain item trusts the `security` tool, not the signed app, until app signing exists.
 
 - Chromosome browser, 2026-11-10: a Chromosomes screen in the Mac app compares two family kits' raw DNA on this Mac. It draws the shared segments on chromosomes 1–22, with a table of the same segments for keyboard and screen-reader use. The demo family now uses a denser made-up panel (about 50 markers per cM). Comparisons use the chip-error tolerance.

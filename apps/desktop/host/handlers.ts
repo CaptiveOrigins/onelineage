@@ -3,7 +3,7 @@
  * and holds no app logic they should own. The Mac app runs it as a child process (host/main.ts); `pnpm dev`
  * in a browser serves it from the Vite dev server; tests call it directly.
  */
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { BlindGate, compareKits, ONE_CM_PER_MB, sha256Hex, TermsRegister, type Unblinding } from '@captiveorigins/onelineage-core'
 import { importGenealogyAssistant, importRawDna, type ImportResult, type RawImport } from '@captiveorigins/onelineage-connectors'
@@ -355,6 +355,39 @@ export function createHost(opts: { stateDir: string; keys?: KeyStore; now?: () =
         }
       })
       return { a, b, totalCm: c.totalCm, longestCm: c.longestCm, map: c.map, comparedMarkers: c.comparedMarkers, chromosomes }
+    },
+
+    async privacyNames() {
+      const lib = current()
+      const file = join(lib, 'privacy-names.json')
+      let saved: { format: number; salt: string; pairs: Record<string, string> }
+      if (existsSync(file)) saved = JSON.parse(readFileSync(file, 'utf8'))
+      else {
+        saved = { format: 1, salt: [...globalThis.crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, '0')).join(''), pairs: {} }
+        writeFileSync(file, JSON.stringify(saved, null, 2) + '\n')
+      }
+      // Real words a stand-in must never be: every word in the names this library shows.
+      const data = await load(lib)
+      const words = new Set<string>()
+      for (const k of data.kits) {
+        for (const w of k.name.toLowerCase().match(/\p{L}+/gu) ?? []) words.add(w)
+        for (const o of k.result.observations) for (const w of o.name.toLowerCase().match(/\p{L}+/gu) ?? []) words.add(w)
+      }
+      return { salt: saved.salt, known: saved.pairs, reserved: [...words] }
+    },
+
+    async addPrivacyNames({ pairs }) {
+      const lib = current()
+      const file = join(lib, 'privacy-names.json')
+      if (!existsSync(file)) throw new HostError('Privacy names haven’t been set up for this library yet.')
+      const saved = JSON.parse(readFileSync(file, 'utf8')) as { format: number; salt: string; pairs: Record<string, string> }
+      let n = 0
+      for (const [w, st] of Object.entries(pairs)) {
+        if (typeof w !== 'string' || typeof st !== 'string' || !/^\p{L}+$/u.test(w) || !/^\p{L}+$/u.test(st)) throw new HostError('A stand-in pairing wasn’t a pair of words.')
+        if (saved.pairs[w] === undefined) { saved.pairs[w] = st; n++ }
+      }
+      writeFileSync(file, JSON.stringify(saved, null, 2) + '\n')
+      return { saved: n }
     },
 
     async backupKeyRecovery() {

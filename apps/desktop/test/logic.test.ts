@@ -4,7 +4,7 @@ import type { BackupState, MatchRow, Status } from '../host/protocol'
 import { firstLaunchStep, flowInputs, nextStepDown, stepLabel } from '../src/flow'
 import { cmInput, DEFAULT_SORT, filterMatches, nextSort, NO_FILTER, sortMatches } from '../src/matches'
 import { recordedTree, relabel, withCandidateFathers, type TreePerson } from '../src/pedigree'
-import { createStandIns, standInCandidate } from '../src/standins'
+import { createStandIns, standInCandidate, variantKey } from '../src/standins'
 
 describe('stand-in names', () => {
   it('gives every instance of a word the same stand-in, wherever it appears', () => {
@@ -143,5 +143,40 @@ describe('OnePedigree documents for the theory page', () => {
     const doc = relabel(recordedTree(people, 'me', 1), s.name)
     expect(doc.individuals.every((i) => !/Brathford/.test(i.label ?? ''))).toBe(true)
     expect(doc.individuals.map((i) => i.id).sort()).toEqual(['dad', 'me', 'mum'])
+  })
+})
+
+describe('stand-ins keep the shape of the family (plan 2b)', () => {
+  it('keeps patronymic endings and name prefixes', () => {
+    const s = createStandIns('shape')
+    expect(s.word('Halvardsdotter')).toMatch(/sdotter$/)
+    expect(s.word('Bergsson')).toMatch(/sson$/)
+    expect(s.word('McGarrow')).toMatch(/^Mc/)
+    expect(s.name("O'Brennan")).toMatch(/^O'/)
+    expect(s.name("O'Brennan")).not.toBe("O'Brennan")
+  })
+  it('gives spelling variants a shared root, and still keeps them apart', () => {
+    expect(variantKey('Vellén')).toBe(variantKey('Velleen'))
+    expect(variantKey('Garrick')).toBe(variantKey('Garick'))
+    const s = createStandIns('variants')
+    const a = s.word('Garrick')
+    const b = s.word('Garick')
+    expect(a).not.toBe(b)
+    expect(a.slice(0, 4)).toBe(b.slice(0, 4))
+  })
+  it('never uses a real word from the library, and remembers pairings across sessions', () => {
+    const fresh = createStandIns('keep').word('Arlow')
+    const avoid = createStandIns('keep', { reserved: [fresh] }).word('Arlow')
+    expect(avoid.toLowerCase()).not.toBe(fresh.toLowerCase())
+    const saved: Record<string, string> = {}
+    const first = createStandIns('one', { onNew: (w, s) => { saved[w] = s } })
+    const x = first.word('Tennick')
+    const later = createStandIns('a different salt', { known: saved })
+    expect(later.word('Tennick')).toBe(x)
+    expect(Object.keys(saved)).toEqual(['tennick'])
+  })
+  it('handles names that start with accented letters', () => {
+    const s = createStandIns('accents')
+    expect(s.name('Åsa Öberg')).not.toMatch(/Åsa|Öberg/)
   })
 })

@@ -139,6 +139,10 @@ export type HostApi = {
   matches: { params: { kit: string }; result: MatchRow[] }
   theory: { params: Record<string, never>; result: TheoryResult | null }
   unblind: { params: { kit: string }; result: TheoryResult | null }
+  /** Privacy mode's saved stand-ins for this library, and the real words a stand-in must never be. */
+  privacyNames: { params: Record<string, never>; result: { salt: string; known: Record<string, string>; reserved: string[] } }
+  /** Save new stand-in pairings, so they stay the same next time. */
+  addPrivacyNames: { params: { pairs: Record<string, string> }; result: { saved: number } }
   /** A recovery copy of this library's backup key, shown once when the person asks. */
   backupKeyRecovery: { params: Record<string, never>; result: { copy: string } }
   /** Two family kits compared on this Mac from their raw DNA, for the chromosome browser. */
