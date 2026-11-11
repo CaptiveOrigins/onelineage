@@ -139,6 +139,8 @@ export type HostApi = {
   matches: { params: { kit: string }; result: MatchRow[] }
   theory: { params: Record<string, never>; result: TheoryResult | null }
   unblind: { params: { kit: string }; result: TheoryResult | null }
+  /** A recovery copy of this library's backup key, shown once when the person asks. */
+  backupKeyRecovery: { params: Record<string, never>; result: { copy: string } }
   /** Two family kits compared on this Mac from their raw DNA, for the chromosome browser. */
   segments: { params: { a: string; b: string }; result: SegmentsResult }
 }

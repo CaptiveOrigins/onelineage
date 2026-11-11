@@ -6,12 +6,17 @@
 export interface KeyStore {
   /** Shown in Settings, so the person knows what's in place. */
   readonly description: string
+  /** Whether keys can be kept at all. Without it, backups to cloud-synced folders are refused. */
+  readonly available: boolean
+  /** A copy of the key to print or write down, or null if this store can't give one. */
+  recoveryCopy?(library: string): Promise<string>
   /** The 32-byte key for this library's encrypted backups, or null if there's none. */
   backupKey(library: string): Promise<Uint8Array | null>
 }
 
 export const noKeyStore: KeyStore = {
-  description: 'Not built yet. Keys will live in the macOS Keychain; until then, backups to cloud-synced folders are refused.',
+  description: 'No key store in use, so backups to cloud-synced folders are refused.',
+  available: false,
   async backupKey() {
     return null
   },

@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import { decisionsPath, readDecisions } from '@captiveorigins/onelineage-library'
 import { createHost, stampToIso } from '../host/handlers'
 import type { KeyStore } from '../host/keys'
+import { keychainStore, type SecurityRunner } from '../host/keychain'
 
 const tmp = () => mkdtempSync(join(tmpdir(), 'onelineage-app-'))
 const T0 = new Date('2026-11-10T12:00:00Z')
@@ -91,8 +92,29 @@ describe('first launch, on the host', () => {
     expect(s.destinations[0]!.cloudSynced).toBe(true)
     const run = await h.backUpEverywhere({})
     expect(run.results[0]).toMatchObject({ ok: false })
-    expect(run.results[0]!.problems[0]).toMatch(/Keychain/)
+    expect(run.results[0]!.problems[0]).toMatch(/no key store/)
     expect(readdirSync(cloud)).toEqual([])
+  })
+
+  it('with a key store, backs up to a cloud-synced folder encrypted, and gives a recovery copy', async () => {
+    const items = new Map<string, string>()
+    const fake: SecurityRunner = async (args) => {
+      const at = (f: string) => args[args.indexOf(f) + 1]!
+      const k = `${at('-s')}|${at('-a')}`
+      if (args[0] === 'find-generic-password') return items.has(k) ? { code: 0, stdout: items.get(k)! } : { code: 44, stdout: '' }
+      items.set(k, at('-w'))
+      return { code: 0, stdout: '' }
+    }
+    const { root, h } = setup(keychainStore(fake))
+    await h.chooseLibrary({ path: join(root, 'lib') })
+    const cloud = join(root, 'Library', 'Mobile Documents', 'com~apple~CloudDocs')
+    mkdirSync(cloud, { recursive: true })
+    await h.addDestination({ path: cloud })
+    const run = await h.backUpEverywhere({})
+    expect(run.results[0]).toMatchObject({ ok: true })
+    expect(readdirSync(cloud).some((n) => n.startsWith('OneLineage backup '))).toBe(true)
+    expect(items.size).toBe(1)
+    expect((await h.backupKeyRecovery({})).copy).toMatch(/\(check [0-9A-F]{6}\)$/)
   })
 })
 

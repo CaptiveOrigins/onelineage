@@ -4,8 +4,11 @@
  */
 import { createInterface } from 'node:readline'
 import { createHost, defaultStateDir } from './handlers'
+import { keychainStore } from './keychain'
+import { noKeyStore } from './keys'
 
-const host = createHost({ stateDir: process.env['ONELINEAGE_STATE_DIR'] || defaultStateDir() })
+// The real Keychain on a Mac. Tests and the browser dev server never use it.
+const host = createHost({ stateDir: process.env['ONELINEAGE_STATE_DIR'] || defaultStateDir(), keys: process.platform === 'darwin' ? keychainStore() : noKeyStore })
 const lines = createInterface({ input: process.stdin, crlfDelay: Infinity })
 
 let queue = Promise.resolve()

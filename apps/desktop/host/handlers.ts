@@ -144,7 +144,8 @@ export function createHost(opts: { stateDir: string; keys?: KeyStore; now?: () =
       let lastCheckedBackup: string | null = null
       if (!existsSync(d)) problems.push('This folder can’t be found. If it’s on a disk that isn’t plugged in, connect it and look again.')
       else {
-        if (cloud) problems.push('This folder is synced to a cloud service, so copies there must be encrypted. Encryption keys need the Keychain, which isn’t built yet. Choose a folder that isn’t synced for now.')
+        if (cloud && !keys.available) problems.push('This folder is synced to a cloud service, so copies there must be encrypted, and no key store is in use. Choose a folder that isn’t synced.')
+        if (cloud && keys.available) warnings.push('Synced to a cloud service: copies here are encrypted on this Mac first, with a key kept in the Keychain. Keep a recovery copy of the key.')
         if (devs[i] === libDev) warnings.push('On the same disk as the library, so one failed disk would take both.')
         if (devs.some((x, j) => j !== i && x !== null && x === devs[i])) warnings.push('On the same disk as another backup destination.')
         const key = cloud ? await keys.backupKey(lib) : null
@@ -246,7 +247,7 @@ export function createHost(opts: { stateDir: string; keys?: KeyStore; now?: () =
           if (!existsSync(d)) throw new HostError('This folder can’t be found. Connect its disk and try again.')
           const cloud = isCloudSynced(d)
           const key = cloud ? await keys.backupKey(lib) : null
-          if (cloud && !key) throw new HostError('This folder is synced to a cloud service, so copies there must be encrypted, and the Keychain isn’t built yet. Nothing was written.')
+          if (cloud && !key) throw new HostError('This folder is synced to a cloud service, so copies there must be encrypted, and no key store is in use. Nothing was written.')
           const r = await backupTo(lib, d, { now: now(), ...(key ? { encryptWith: key } : {}) })
           results.push({ destination: d, ok: r.checked, files: r.files, encrypted: r.encrypted, problems: r.problems })
         } catch (e) {
@@ -354,6 +355,11 @@ export function createHost(opts: { stateDir: string; keys?: KeyStore; now?: () =
         }
       })
       return { a, b, totalCm: c.totalCm, longestCm: c.longestCm, map: c.map, comparedMarkers: c.comparedMarkers, chromosomes }
+    },
+
+    async backupKeyRecovery() {
+      if (!keys.available || !keys.recoveryCopy) throw new HostError('No key store is in use, so there’s no key to copy.')
+      return { copy: await keys.recoveryCopy(current()) }
     },
 
     async unblind({ kit }) {
