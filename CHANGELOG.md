@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- DNA groups in the app, 2026-11-10: the host groups each kit's matches with the analysis package (ADR 0006), once per load. The extension's side-panel summary now gives the match's side, its neutral group ID and split, and how sure the grouping is (Strong, Moderate or Weak, from run agreement), or why it isn't grouped. A `groups` request lists group sizes and sides. Summaries carry no names.
+
 - Collected pages into the library, 2026-11-10: when a collecting run ends, for any reason, the extension's match pages are checked by a new importer (`importCollectedPages`) and stored as a frozen export, `<date> mocksite collected <kit> <time>`. On the next load they join the kit's matches. Only the made-up mock site is allowed; real services are refused by the terms register.
 
 - The app's cache, 2026-11-10: each library's SQLite cache is built in the app's own folder from the library's stored exports, read through the importers with their checks, on every load. A `cacheCheck` request rebuilds it in memory, compares digests (S11), and replaces the file on disk if they differ.

@@ -8,6 +8,7 @@ import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSyn
 import { DatabaseSync } from 'node:sqlite'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { BlindGate, compareKits, ONE_CM_PER_MB, sha256Hex, TermsRegister, type Unblinding } from '@captiveorigins/onelineage-core'
+import { clusterKit, type ClusterRun } from '@captiveorigins/onelineage-analysis'
 import { importCollectedPages, importGenealogyAssistant, importRawDna, type ImportResult, type RawImport } from '@captiveorigins/onelineage-connectors'
 import {
   appendDecision, backupTo, backupVerdict, canLowerBypass, checkBackup, decisionsPath, initLibrary, isCloudSynced, listFiles, openLibrary,
@@ -35,7 +36,7 @@ const LIST_FILE = /^(.*) - DNA Matches - Test ([0-9A-F-]{36})(?: \(\d+\))?\.csv$
 /** Real services aren't readable in v0: an empty register refuses them all. Planted data is exempt from terms, never from blindness. */
 const NO_TERMS = new TermsRegister([])
 
-type LoadedKit = { result: ImportResult; name: string; exportDate: string; sharedFiles: number; raw: RawImport | null }
+type LoadedKit = { result: ImportResult; name: string; exportDate: string; sharedFiles: number; raw: RawImport | null; groups?: ClusterRun }
 type Loaded = { kits: LoadedKit[]; ownTree: { name: string; doc: PedigreeDocument } | null; truthFile: string | null }
 
 export class HostError extends Error {}
@@ -110,6 +111,9 @@ export function createHost(opts: {
       keyStore: keys.description,
     }
   }
+
+  /** The kit's DNA groups (ADR 0006), worked out once per load. They read DNA figures only, never trees. */
+  const groupsOf = (k: LoadedKit): ClusterRun => (k.groups ??= clusterKit(k.result.observations, k.result.links))
 
   async function load(lib: string): Promise<Loaded> {
     const have = loaded.get(lib)
@@ -254,9 +258,17 @@ export function createHost(opts: {
       if (!lib) return null
       const k = (await load(lib)).kits.find((x) => x.result.kit === kit)
       const o = k?.result.observations.find((x) => x.match === match)
-      if (!o) return null
-      // No names go across, so there's nothing for the privacy switch to replace here.
-      return { match: o.match, line: SIDE_LINE[o.side] ?? 'Not placed yet', confidence: 'Not computed yet: the line is the service’s own side label.', theories: [] }
+      if (!k || !o) return null
+      // No names go across, so there's nothing for the privacy switch to replace here. Groups have neutral IDs.
+      const run = groupsOf(k)
+      const g = run.matches.find((x) => x.match === match)
+      const side = SIDE_LINE[o.side] ?? 'Not placed yet'
+      if (!g) {
+        const why = run.excluded.find((x) => x.match === match)?.reason
+        return { match: o.match, line: `${side}; not grouped${why ? ` (${why})` : ''}`, confidence: 'No group: only matches of 20–400 cM with shared matches are grouped.', theories: [] }
+      }
+      const strength = g.stability >= 0.9 ? 'Strong' : g.stability >= 0.7 ? 'Moderate' : 'Weak'
+      return { match: o.match, line: `${side}; group ${g.group}${g.path ? `, split ${g.path}` : ''}`, confidence: `${strength}: ${Math.round(g.stability * 100)}% of grouping runs agree.`, theories: [] }
     },
     async acceptPage(kit, _site, page) {
       const c = collectedFor(kit)
@@ -523,6 +535,18 @@ export function createHost(opts: {
     },
 
     /** S11: rebuild from the library in memory and compare with the cache on disk. */
+    async groups({ kit }) {
+      const k = (await load(current())).kits.find((x) => x.result.kit === kit)
+      if (!k) throw new HostError('That kit isn’t in this library.')
+      const run = groupsOf(k)
+      const sizes = new Map<string, number>()
+      for (const m of run.matches) sizes.set(m.group, (sizes.get(m.group) ?? 0) + 1)
+      return {
+        kit, engine: `${run.engine.name} ${run.engine.version}`, grouped: run.matches.length, excluded: run.excluded.length,
+        groups: [...sizes].map(([group, size]) => ({ group, size, sides: [...new Set(run.matches.filter((m) => m.group === group).map((m) => SIDE_LINE[k.result.observations.find((o) => o.match === m.match)?.side ?? 'unassigned'] ?? '?'))] })).sort((a, b) => b.size - a.size),
+      }
+    },
+
     async cacheCheck() {
       const lib = current()
       loaded.delete(lib)
@@ -613,6 +637,8 @@ export function createHost(opts: {
       return fn(params ?? {})
     },
     handlers,
+    /** What the extension may be told, for tests. Not reachable from the window or the extension directly. */
+    extensionData,
     /** The extension bridge, for the socket listener in main.ts. Resolves once trusted developer IDs are read. */
     extension: Object.assign(extension, { ready }),
   }

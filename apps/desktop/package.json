@@ -17,6 +17,7 @@
     "app:build": "tauri build"
   },
   "dependencies": {
+    "@captiveorigins/onelineage-analysis": "workspace:*",
     "@captiveorigins/onelineage-connectors": "workspace:*",
     "@captiveorigins/onelineage-core": "workspace:*",
     "@captiveorigins/onelineage-library": "workspace:*",

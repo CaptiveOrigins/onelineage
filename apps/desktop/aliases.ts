@@ -7,4 +7,5 @@ export const packageAliases = {
   '@captiveorigins/onelineage-connectors': src('connectors'),
   '@captiveorigins/onelineage-library': src('library'),
   '@captiveorigins/onelineage-simulate': src('simulate'),
+  '@captiveorigins/onelineage-analysis': src('analysis'),
 }

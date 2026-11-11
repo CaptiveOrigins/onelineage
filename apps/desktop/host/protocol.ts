@@ -152,6 +152,8 @@ export type HostApi = {
   privacyNames: { params: Record<string, never>; result: { salt: string; known: Record<string, string>; reserved: string[] } }
   /** Save new stand-in pairings, so they stay the same next time. */
   addPrivacyNames: { params: { pairs: Record<string, string> }; result: { saved: number } }
+  /** The kit's DNA groups, worked out from DNA figures alone (neutral IDs until unblinding). */
+  groups: { params: { kit: string }; result: { kit: string; engine: string; grouped: number; excluded: number; groups: { group: string; size: number; sides: string[] }[] } }
   /** S11: rebuild the cache from the library and compare. If they differ, the cache on disk is replaced. */
   cacheCheck: { params: Record<string, never>; result: { ok: boolean; rebuilt: boolean; digest: string } }
   /** A recovery copy of this library's backup key, shown once when the person asks. */

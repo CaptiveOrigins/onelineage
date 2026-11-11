@@ -10,7 +10,8 @@
       "@captiveorigins/onelineage-core": ["../../packages/core/src/index.ts"],
       "@captiveorigins/onelineage-connectors": ["../../packages/connectors/src/index.ts"],
       "@captiveorigins/onelineage-library": ["../../packages/library/src/index.ts"],
-      "@captiveorigins/onelineage-simulate": ["../../packages/simulate/src/index.ts"]
+      "@captiveorigins/onelineage-simulate": ["../../packages/simulate/src/index.ts"],
+      "@captiveorigins/onelineage-analysis": ["../../packages/analysis/src/index.ts"]
     }
   },
   "include": ["src", "host", "test", "vite.config.ts", "vitest.config.ts", "tsup.host.config.ts", "aliases.ts"]

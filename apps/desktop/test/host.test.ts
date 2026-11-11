@@ -118,6 +118,23 @@ describe('first launch, on the host', () => {
   })
 })
 
+describe('DNA groups in the app', () => {
+  it('groups the demo kit from DNA alone, and the side panel summary names the group and how sure it is', async () => {
+    const { root, host, h } = setup()
+    await h.chooseLibrary({ path: join(root, 'lib') })
+    await h.openDemo({ seed: 1 })
+    const { kits } = await h.kits({})
+    const g = await h.groups({ kit: kits[0]!.kit })
+    expect(g.grouped).toBeGreaterThan(5)
+    expect(g.groups[0]!.group).toMatch(/^G\d+$/)
+    const grouped = (await h.matches({ kit: kits[0]!.kit })).find((r) => r.cm >= 20 && r.cm <= 400)!
+    const summary = await host.extensionData.matchSummary(kits[0]!.kit, grouped.match, false)
+    expect(summary).not.toBeNull()
+    expect(summary!.line + ' ' + summary!.confidence).toMatch(/group G\d+.*(Strong|Moderate|Weak)|not grouped/)
+    expect(JSON.stringify(summary)).not.toContain(grouped.name)
+  })
+})
+
 describe('the cache', () => {
   it('is built in the app folder from the library, and a check rebuilds it when it drifts (S11)', async () => {
     const { root, h } = setup()
