@@ -105,6 +105,17 @@ export function App() {
         call('setPrivacy', { on: next }).then(onExt, () => setPrivacy(next))
       }
     }
+    // In the Mac app, View > Privacy owns Cmd+Shift+P and tells the window; the browser dev server listens for the key itself.
+    if (inMacApp) {
+      let stop: (() => void) | undefined
+      void import('@tauri-apps/api/event').then(({ listen }) =>
+        listen('privacy-toggle', () => {
+          const next = !privacyRef.current
+          call('setPrivacy', { on: next }).then(onExt, () => setPrivacy(next))
+        }).then((u) => (stop = u)),
+      )
+      return () => stop?.()
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [onExt])

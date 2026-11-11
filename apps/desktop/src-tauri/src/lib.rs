@@ -10,7 +10,8 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::PathBuf;
 use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
 use std::sync::{Arc, Mutex};
-use tauri::{Manager, State};
+use tauri::menu::{Menu, MenuItem, Submenu};
+use tauri::{Emitter, Manager, State};
 
 struct Sidecar {
     child: Child,
@@ -126,6 +127,20 @@ pub fn run() {
         .plugin(tauri_plugin_notification::init())
         .manage(Host::default())
         .invoke_handler(tauri::generate_handler![host_call])
+        // The standard Mac menus, plus View > Privacy (Cmd+Shift+P), so privacy can be flipped from the menu bar.
+        // The window does the flipping through the host, the same way as the toolbar button.
+        .menu(|handle| {
+            let menu = Menu::default(handle)?;
+            let privacy = MenuItem::with_id(handle, "privacy", "Privacy", true, Some("CmdOrCtrl+Shift+P"))?;
+            let view = Submenu::with_items(handle, "View", true, &[&privacy])?;
+            menu.append(&view)?;
+            Ok(menu)
+        })
+        .on_menu_event(|app, event| {
+            if event.id() == "privacy" {
+                let _ = app.emit("privacy-toggle", ());
+            }
+        })
         .build(tauri::generate_context!())
         .expect("error while starting OneLineage")
         .run(|app, event| {

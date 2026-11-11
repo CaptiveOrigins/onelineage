@@ -180,3 +180,19 @@ describe('stand-ins keep the shape of the family (plan 2b)', () => {
     expect(s.name('Åsa Öberg')).not.toMatch(/Åsa|Öberg/)
   })
 })
+
+describe('masking years and places for shares (plan 2b)', async () => {
+  const { maskYear, maskPlace } = await import('../src/mask')
+  it('rounds years to the decade, whatever the date style', () => {
+    expect(maskYear('1887')).toBe('1880s')
+    expect(maskYear('12 Mar 1887')).toBe('1880s')
+    expect(maskYear('1887-03-12')).toBe('1880s')
+    expect(maskYear('born 1902, died 1979')).toBe('born 1900s, died 1970s')
+    expect(maskYear('no year here')).toBe('no year here')
+  })
+  it('keeps only the broadest part of a place', () => {
+    expect(maskPlace('Harrowfield, Somecounty, Region C')).toBe('Region C')
+    expect(maskPlace('Region C')).toBe('Region C')
+    expect(maskPlace('')).toBe('')
+  })
+})
