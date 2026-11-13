@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- OneOrigin brand copy: `brand/oneorigin/` now carries the suite's brand, copied from OnePhylogeny's `docs/oneorigin/` and locked by `brand/oneorigin.lock`. It includes the palette approved by the owner on 2026-11-12, and the OneLineage mark (`marks/onelineage-light.svg`, `-dark.svg` and `-small.svg`). `node scripts/oneorigin.mjs check` runs in CI and fails on any hand edit to the copy. The app icon isn't decided yet, so none is added.
+
 - Privacy extras, 2026-11-10: View > Privacy in the Mac menu bar (Cmd+Shift+P) flips privacy through the host, like the toolbar button. `maskYear` rounds years to the decade and `maskPlace` keeps only the broadest part of a place, ready for shares and exports. Both are off unless chosen. Stand-ins on the services' own pages aren't built (see docs/decisions.md).
 
 - GEDmatch checklist, 2026-11-10: a GEDmatch screen lists the family kits, recommends uploading those with raw DNA, and guides the upload on GEDmatch's own site. It records each kit number and its privacy setting in the decisions log. Opt-in to law-enforcement matching is flagged. A minor's kit needs a second confirmation that a parent or guardian chose it, and Private is recommended. The app never uploads.
