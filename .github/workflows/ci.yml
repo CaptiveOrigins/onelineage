@@ -19,6 +19,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
+      # The OneOrigin brand copy (brand/oneorigin/) must match brand/oneorigin.lock. It warns, without failing,
+      # when the source in OnePhylogeny's docs/oneorigin/ has moved ahead of the copy.
+      - name: OneOrigin brand copy
+        run: node scripts/oneorigin.mjs check
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:

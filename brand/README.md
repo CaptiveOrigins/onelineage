@@ -1,9 +1,9 @@
 # Brand
 
-OneLineage follows the OneOrigin brand: the suite guidelines in [onephylogeny/docs/oneorigin/guidelines.md](https://github.com/CaptiveOrigins/onephylogeny/blob/main/docs/oneorigin/guidelines.md), and `brand/README.md` in the other OneOrigin repos.
+OneLineage follows the OneOrigin brand. `brand/oneorigin/` is a locked copy of the suite's brand source, OnePhylogeny's [`docs/oneorigin/`](https://github.com/CaptiveOrigins/onephylogeny/tree/main/docs/oneorigin). Change the brand there, never in this copy: `node scripts/oneorigin.mjs check` runs in CI and fails on any hand edit. To take a newer source, run `node scripts/oneorigin.mjs lock --source <OnePhylogeny checkout> --copy`.
 
-That means the same tile, blocks, connectors and heart badge, the same colors, controls and voice. CSS variables use the prefix `--ol-`.
+- **Palette** (approved by the owner on 2026-11-12, in `brand/oneorigin/brand.md` and `tokens.json`): OneLineage is sky blue `#3fb1e4`, with level shades `#79c8ec` and `#a3daf2` and text color `#2c7ca0` (4.67:1 on white). The one is deep teal `#1f6f6b` with a cream center, and lines are aubergine `#363051`.
+- **Mark:** `brand/oneorigin/marks/onelineage-light.svg`, `-dark.svg` and `-small.svg`: a spiral around a person, who is the one at its center.
+- **Not decided yet:** OneLineage's app icon, tile and maker's mark. No icon masters (`icon.svg`, `icon-small.svg`, `icon-1024.png`) are added until they are.
 
-OneLineage's own tile color and glyph are waiting for the owner's choice. The proposal is a warm taupe tile, from the brown not yet used, and two parents joined above a line of descent drawn as a short double helix. The icon masters (`icon.svg`, `icon-small.svg`, `icon-1024.png`) will be added once the mark is approved.
-
-A single brand source that every OneOrigin repo syncs from automatically has been proposed, and is waiting for the owner.
+CSS variables use the prefix `--ol-`.
