@@ -1,5 +1,5 @@
 /** Filtering and sorting for the matches table. Pure, so the table's behaviour is tested apart from the screen. */
-import type { MatchSide } from '@captiveorigins/onelineage-core'
+import type { MatchSide } from '@extantape/onefamily-core'
 import type { MatchRow } from '../host/protocol'
 
 export type TreeFilter = 'all' | 'public' | 'any-tree' | 'no-tree'

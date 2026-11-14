@@ -9,7 +9,7 @@ export default defineConfig({
   target: 'node22',
   outDir: 'host-dist',
   outExtension: () => ({ js: '.mjs' }),
-  noExternal: [/^@captiveorigins\//],
+  noExternal: [/^@extantape\//],
   external: [/^node:/],
   clean: true,
   dts: false,

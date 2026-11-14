@@ -31,10 +31,10 @@ export async function runCollection(p: { runId: string; kit: string; origin: str
 
   /** One paced visit. Returns null to go on, or why the run stopped. */
   const step = async (path: string): Promise<{ stop: RunResult } | { data: Record<string, unknown>; kind: string }> => {
-    if (d.shouldStop()) return { stop: { reason: 'stopped-in-app', pages, detail: 'Stopped in OneLineage.' } }
+    if (d.shouldStop()) return { stop: { reason: 'stopped-in-app', pages, detail: 'Stopped in OneFamily.' } }
     if (pages >= p.maxPages) return { stop: { reason: 'daily-cap', pages, detail: `Reached this run’s budget of ${p.maxPages} pages.` } }
     if (pages > 0) await d.sleep(pauseMs(d.random, pace))
-    if (d.shouldStop()) return { stop: { reason: 'stopped-in-app', pages, detail: 'Stopped in OneLineage.' } }
+    if (d.shouldStop()) return { stop: { reason: 'stopped-in-app', pages, detail: 'Stopped in OneFamily.' } }
     const url = new URL(path, p.origin).href
     if (new URL(url).origin !== p.origin) return { stop: { reason: 'error', pages, detail: 'A link pointed off the site. Stopped there.' } }
     let snap: PageSnapshot
@@ -48,7 +48,7 @@ export async function runCollection(p: { runId: string; kit: string; origin: str
     const v = judgePage(snap, p.origin)
     if (!v.go) return { stop: { reason: v.reason, pages, detail: v.detail } }
     const r = await d.ask({ type: 'request', request: 'pageExport', kit: p.kit, runId: p.runId, page: snap })
-    if (!r.ok) return { stop: { reason: 'error', pages, detail: `OneLineage didn’t take the page: ${r.error}` } }
+    if (!r.ok) return { stop: { reason: 'error', pages, detail: `OneFamily didn’t take the page: ${r.error}` } }
     return { data: v.data, kind: v.kind }
   }
 
@@ -65,7 +65,7 @@ export async function runCollection(p: { runId: string; kit: string; origin: str
 
   // Then the new matches the app asks for, one page each.
   const r = await d.ask({ type: 'request', request: 'newMatchesToFetch', kit: p.kit, runId: p.runId })
-  if (!r.ok) return { reason: 'error', pages, detail: `OneLineage didn’t send the matches to fetch: ${r.error}` }
+  if (!r.ok) return { reason: 'error', pages, detail: `OneFamily didn’t send the matches to fetch: ${r.error}` }
   const ids = ((r.data as { matches?: unknown }).matches as string[] | undefined) ?? []
   for (const id of ids) {
     const path = paths.get(id)
@@ -85,7 +85,7 @@ export async function runLabels(p: { kit: string; origin: string; labels: LabelI
   let pages = 0
   let applied = 0
   for (const l of p.labels) {
-    if (d.shouldStop()) return { reason: 'stopped-in-app', pages, applied, detail: 'Stopped in OneLineage.' }
+    if (d.shouldStop()) return { reason: 'stopped-in-app', pages, applied, detail: 'Stopped in OneFamily.' }
     if (pages > 0) await d.sleep(pauseMs(d.random, pace))
     const url = new URL(`/kits/${encodeURIComponent(p.kit)}/matches/${encodeURIComponent(l.match)}`, p.origin).href
     let snap: PageSnapshot

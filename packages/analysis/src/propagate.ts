@@ -4,7 +4,7 @@
  * placed only when its best line scores at least `ratio` times the runner-up and at least `minScore`. Everything
  * else stays "unplaced", never guessed. Rounds repeat, all matches at once, until nothing changes.
  */
-import type { SharedMatchLink } from '@captiveorigins/onelineage-core'
+import type { SharedMatchLink } from '@extantape/onefamily-core'
 import { cmp } from './graph.js'
 
 export type PropagateOptions = {

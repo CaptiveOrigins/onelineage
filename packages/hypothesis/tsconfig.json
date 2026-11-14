@@ -1,5 +1,5 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "paths": { "@captiveorigins/onelineage-simulate": ["../simulate/src/index.ts"] } },
+  "compilerOptions": { "paths": { "@extantape/onefamily-simulate": ["../simulate/src/index.ts"] } },
   "include": ["src", "test"]
 }

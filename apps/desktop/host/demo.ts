@@ -1,5 +1,5 @@
 /**
- * The demo library: a planted family from `@captiveorigins/onelineage-simulate`, stored the way a real
+ * The demo library: a planted family from `@extantape/onefamily-simulate`, stored the way a real
  * library stores exports. Every person in it is invented. It lives in its own folder, never in the user's
  * library, so made-up kits can't mix with real ones.
  *
@@ -12,8 +12,8 @@
  */
 import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { initLibrary, storeExport } from '@captiveorigins/onelineage-library'
-import { AlleleBook, exportKit, genotypesOf, makePanel, standardFamily, truthJson, writeRaw, type RawFormat } from '@captiveorigins/onelineage-simulate'
+import { initLibrary, storeExport } from '@extantape/onefamily-library'
+import { AlleleBook, exportKit, genotypesOf, makePanel, standardFamily, truthJson, writeRaw, type RawFormat } from '@extantape/onefamily-simulate'
 import { recordedTree } from '../src/pedigree'
 
 const enc = new TextEncoder()
@@ -25,7 +25,7 @@ export async function createDemoLibrary(dir: string, seed: number, now = new Dat
   initLibrary(dir, now)
   writeFileSync(
     join(dir, DEMO_NOTE),
-    `This library was made up by OneLineage (planted family, seed ${seed}). Every person, name and DNA file in it is invented.\n`,
+    `This library was made up by OneFamily (planted family, seed ${seed}). Every person, name and DNA file in it is invented.\n`,
   )
   const date = now.toISOString().slice(0, 10)
   const family = standardFamily({ seed })

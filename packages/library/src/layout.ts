@@ -9,7 +9,7 @@
  */
 import { chmodSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative } from 'node:path'
-import { sha256Hex } from '@captiveorigins/onelineage-core'
+import { sha256Hex } from '@extantape/onefamily-core'
 
 export const LIBRARY_FORMAT = 1
 export type LibraryInfo = { format: number; created: string }
@@ -25,7 +25,7 @@ export function initLibrary(dir: string, now = new Date()): LibraryInfo {
 
 export function openLibrary(dir: string): LibraryInfo {
   const path = join(dir, 'library.json')
-  if (!existsSync(path)) throw new Error(`${dir} isn't a OneLineage library (no library.json)`)
+  if (!existsSync(path)) throw new Error(`${dir} isn't a OneFamily library (no library.json)`)
   const info = JSON.parse(readFileSync(path, 'utf8')) as LibraryInfo
   if (info.format !== LIBRARY_FORMAT) throw new Error(`library format ${info.format} isn't one this version reads (${LIBRARY_FORMAT})`)
   return info

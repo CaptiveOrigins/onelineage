@@ -2,7 +2,7 @@
  * OnePedigree documents for the theory page. Pure, so both the host (when it writes the demo's recorded
  * tree) and the window use it, and tests can check it.
  */
-import type { PedigreeDocument } from '@captiveorigins/onepedigree-core'
+import type { PedigreeDocument } from '@extantape/onepedigree-core'
 import type { TheoryDocument } from '../host/protocol'
 
 export type TreePerson = {

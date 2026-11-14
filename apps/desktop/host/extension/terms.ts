@@ -3,14 +3,14 @@
  * them) plus one synthetic entry for the local mock site. The synthetic entry's text is kept here and in
  * apps/extension/mock-site/mocksite.md, and a test keeps the two identical.
  */
-import { registerFromFiles, type TermsRegister } from '@captiveorigins/onelineage-core'
+import { registerFromFiles, type TermsRegister } from '@extantape/onefamily-core'
 
 export const MOCK_SITE_TERMS = `---
 site: mocksite
 name: Made-up genealogy site (local mock, synthetic)
 read: 2026-11-10
 sources:
-  - https://github.com/CaptiveOrigins/onelineage/tree/main/apps/extension/mock-site
+  - https://github.com/ExtantApe/OneFamily/tree/main/apps/extension/mock-site
 capabilities:
   read_own_matches: allowed
   automate_page_visits: allowed

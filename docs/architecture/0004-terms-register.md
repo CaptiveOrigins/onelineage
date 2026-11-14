@@ -4,7 +4,7 @@ Status: accepted, 2026-11-10
 
 ## Context
 
-Decided by the owner, 2026-11-10: OneLineage implements everything technically possible without breaking any service's terms. Terms change, and they're easy to forget.
+Decided by the owner, 2026-11-10: OneFamily implements everything technically possible without breaking any service's terms. Terms change, and they're easy to forget.
 
 ## Decision
 

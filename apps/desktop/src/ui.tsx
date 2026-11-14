@@ -58,7 +58,7 @@ export function FolderField({ label, action, onChoose, busy }: { label: string; 
     >
       <label htmlFor={id}>
         {label}
-        <input id={id} value={path} onChange={(e) => setPath(e.target.value)} placeholder="/Users/you/Documents/OneLineage" spellCheck={false} autoComplete="off" />
+        <input id={id} value={path} onChange={(e) => setPath(e.target.value)} placeholder="~/Documents/OneFamily" spellCheck={false} autoComplete="off" />
       </label>
       <button type="submit" className="ol-primary" disabled={busy || !path.trim()}>
         {action}

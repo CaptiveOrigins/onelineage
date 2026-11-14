@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "OneLineage",
+  "productName": "OneFamily",
   "version": "0.0.0",
-  "identifier": "org.captiveorigins.onelineage",
+  "identifier": "com.extantape.onefamily",
   "build": {
     "beforeDevCommand": "pnpm build:host && pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "OneLineage",
+        "title": "OneFamily",
         "width": 1280,
         "height": 820,
         "minWidth": 900,

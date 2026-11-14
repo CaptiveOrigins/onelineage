@@ -22,7 +22,7 @@ export type AppState = {
 
 const EMPTY: AppState = { version: 1, home: null, demo: null, current: null, destinations: {} }
 
-export const defaultStateDir = () => join(homedir(), 'Library', 'Application Support', 'OneLineage')
+export const defaultStateDir = () => join(homedir(), 'Library', 'Application Support', 'OneFamily')
 
 export function readState(dir: string): AppState {
   const path = join(dir, 'app-state.json')

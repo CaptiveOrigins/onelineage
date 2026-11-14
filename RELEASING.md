@@ -10,4 +10,4 @@ The packages stay at 0.x and aren't published to npm.
 
 Release notes will give both ways past the macOS warning for an app that isn't notarized:
 - **System Settings:** try to open the app once, then go to System Settings > Privacy & Security, click **Open Anyway**, and click **Open** when the warning comes back. Apple says to do this only for an app you trust.
-- **Terminal:** `xattr -dr com.apple.quarantine "/Applications/OneLineage.app"`
+- **Terminal:** `xattr -dr com.apple.quarantine "/Applications/OneFamily.app"`

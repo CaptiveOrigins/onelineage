@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { mkdirSync, mkdtempSync, readdirSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { decisionsPath, readDecisions } from '@captiveorigins/onelineage-library'
+import { decisionsPath, readDecisions } from '@extantape/onefamily-library'
 import { createHost, stampToIso } from '../host/handlers'
 import type { KeyStore } from '../host/keys'
 import { keychainStore, type SecurityRunner } from '../host/keychain'
 
-const tmp = () => mkdtempSync(join(tmpdir(), 'onelineage-app-'))
+const tmp = () => mkdtempSync(join(tmpdir(), 'onefamily-app-'))
 const T0 = new Date('2026-11-10T12:00:00Z')
 
 function setup(keys?: KeyStore) {
@@ -112,7 +112,7 @@ describe('first launch, on the host', () => {
     await h.addDestination({ path: cloud })
     const run = await h.backUpEverywhere({})
     expect(run.results[0]).toMatchObject({ ok: true })
-    expect(readdirSync(cloud).some((n) => n.startsWith('OneLineage backup '))).toBe(true)
+    expect(readdirSync(cloud).some((n) => n.startsWith('OneFamily backup '))).toBe(true)
     expect(items.size).toBe(1)
     expect((await h.backupKeyRecovery({})).copy).toMatch(/\(check [0-9A-F]{6}\)$/)
   })
@@ -179,7 +179,7 @@ describe('what is due', () => {
     const later = createHost({ stateDir: join(root, 'state'), now: () => new Date(T0.getTime() + 400 * 86400000) }).handlers
     const due = await later.due({})
     expect(due.items.filter((i) => i.kind === 'check')).toHaveLength(2)
-    expect(due.message).toMatch(/^OneLineage: 2 kits due for a match-list check and 2 due for a yearly rerun\./)
+    expect(due.message).toMatch(/^OneFamily: 2 kits due for a match-list check and 2 due for a yearly rerun\./)
     for (const i of due.items) expect(due.message).not.toContain(i.label)
     // A native notice at most once a day.
     expect((await later.claimDueNotice({})).notify).toBe(true)
@@ -215,7 +215,7 @@ describe('pages the extension collected', () => {
     const { kits } = await h.kits({})
     const kit = kits[0]!.kit
     const before = (await h.matches({ kit })).length
-    const { storeExport } = await import('@captiveorigins/onelineage-library')
+    const { storeExport } = await import('@extantape/onefamily-library')
     const enc = new TextEncoder()
     await storeExport(s.current!.path, { date: '2026-11-10', service: 'mocksite', label: `collected ${kit} 120000`, files: {
       'pages/0001.json': enc.encode(JSON.stringify({ kind: 'match', kit, match: { id: 'NEW-000001', name: 'Made Up Newcomer', sharedCm: 33, segments: 2, longestCm: 20 } })),

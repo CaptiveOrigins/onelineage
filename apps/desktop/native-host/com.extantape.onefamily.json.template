@@ -1,0 +1,9 @@
+{
+  "name": "com.extantape.onefamily",
+  "description": "OneFamily: lets the OneFamily extension talk to the OneFamily app on this Mac.",
+  "path": "__HOST_PATH__",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://__EXTENSION_ID__/"
+  ]
+}

@@ -4,7 +4,7 @@ Status: accepted, 2026-11-10
 
 ## Context
 
-A family tree can be wrong, through a misattributed parent, an adoption or a guess written down as fact. If an analysis reads the tree first, it tends to confirm it. The point of OneLineage is to let the DNA speak before the tree does.
+A family tree can be wrong, through a misattributed parent, an adoption or a guess written down as fact. If an analysis reads the tree first, it tends to confirm it. The point of OneFamily is to let the DNA speak before the tree does.
 
 ## Decision
 

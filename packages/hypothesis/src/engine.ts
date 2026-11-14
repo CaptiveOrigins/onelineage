@@ -1,5 +1,5 @@
 /**
- * Hypothesis engine (OneLineage plan section 7). Each hypothesis is a complete small family tree: who is
+ * Hypothesis engine (OneFamily plan section 7). Each hypothesis is a complete small family tree: who is
  * whose biological parent. To score one, the engine simulates inheritance through that exact tree many
  * times and asks how often each observed amount of shared DNA comes up. It's the idea behind What Are The
  * Odds?, using simulation rather than a fixed table, so half and full relationships, double cousins and
@@ -11,7 +11,7 @@
  * - The simulator has no crossover interference, and no service-style weighting such as Timber.
  * - People outside the tree are assumed unrelated.
  */
-import { child, founderGenome, type Genome, Rng, shared } from '@captiveorigins/onelineage-simulate'
+import { child, founderGenome, type Genome, Rng, shared } from '@extantape/onefamily-simulate'
 
 export type TreePerson = { id: string; father?: string | null; mother?: string | null }
 export type Hypothesis = { name: string; people: readonly TreePerson[]; /** Relative prior weight; default 1. */ prior?: number }

@@ -63,12 +63,12 @@ export function ChromosomesScreen({ kits }: { kits: KitsResult['kits'] }) {
               const x = (cm: number) => 34 + (cm / longest) * W
               return (
                 <g key={c.chromosome}>
-                  <text x={0} y={y + 11} fontSize={11} fill="var(--ol-muted)">
+                  <text x={0} y={y + 11} fontSize={11} fill="var(--of-muted)">
                     {c.chromosome}
                   </text>
-                  <rect x={x(c.startCm)} y={y + 2} width={Math.max(1, x(c.endCm) - x(c.startCm))} height={10} rx={5} fill="var(--ol-border)" />
+                  <rect x={x(c.startCm)} y={y + 2} width={Math.max(1, x(c.endCm) - x(c.startCm))} height={10} rx={5} fill="var(--of-border)" />
                   {c.segments.map((s, j) => (
-                    <rect key={j} x={x(s.startCm)} y={y + 2} width={Math.max(2, x(s.endCm) - x(s.startCm))} height={10} rx={3} fill="var(--ol-accent)">
+                    <rect key={j} x={x(s.startCm)} y={y + 2} width={Math.max(2, x(s.endCm) - x(s.startCm))} height={10} rx={3} fill="var(--of-accent)">
                       <title>{`Chromosome ${c.chromosome}: ${s.startCm.toFixed(1)}–${s.endCm.toFixed(1)} cM (${s.cm.toFixed(1)} cM, ${s.markers.toLocaleString()} markers)`}</title>
                     </rect>
                   ))}

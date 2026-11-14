@@ -28,12 +28,12 @@ export function runRelay(io: RelayIo): void {
     io.exit(1)
   }
   const origin = callerOrigin(io.argv)
-  if (!origin) return fail('Only a Chrome extension can start the OneLineage native host.')
+  if (!origin) return fail('Only a Chrome extension can start the OneFamily native host.')
 
   const sock = connect(io.socketPath)
   let accepted = false
   const pendingFrames: unknown[] = []
-  sock.on('error', () => fail('OneLineage isn’t open. Open the app, then try again.'))
+  sock.on('error', () => fail('OneFamily isn’t open. Open the app, then try again.'))
   sock.on('connect', () => sock.write(JSON.stringify({ hello: { origin } }) + '\n'))
   sock.on('close', () => io.exit(0))
   createInterface({ input: sock, crlfDelay: Infinity }).on('line', (line) => {
@@ -47,7 +47,7 @@ export function runRelay(io: RelayIo): void {
       if (msg.accepted) {
         accepted = true
         for (const f of pendingFrames.splice(0)) sock.write(JSON.stringify(f) + '\n')
-      } else fail(msg.refused ?? 'OneLineage refused this connection.')
+      } else fail(msg.refused ?? 'OneFamily refused this connection.')
       return
     }
     try {

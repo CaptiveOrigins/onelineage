@@ -1,5 +1,5 @@
 /**
- * One person, many services (ADR 0001). Every human gets one universal OneLineage ID. Each service's
+ * One person, many services (ADR 0001). Every human gets one universal OneFamily ID. Each service's
  * ID attaches to it through an identity link, and only a person confirms a link. The engine only proposes,
  * with its evidence. It never merges people on its own, and never on a name alone.
  *

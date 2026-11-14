@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { SharedMatchLink } from '@captiveorigins/onelineage-core'
+import type { SharedMatchLink } from '@extantape/onefamily-core'
 import { adjustedRandIndex, propagateFromSeeds, UNPLACED } from '../src/index.js'
 
 const map = (xs: (string | number)[]) => new Map(xs.map((x, i) => [i, x]))

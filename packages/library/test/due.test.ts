@@ -14,7 +14,7 @@ describe('when kits are due', () => {
   it('nothing due gives no message; the message has counts only', () => {
     expect(dueMessage([])).toBeNull()
     const msg = dueMessage(dueItems([{ kit: 'A', label: 'Secret Kit Name', lastExport: '2025-01-01', lastFullRun: null }], now))!
-    expect(msg).toBe('OneLineage: 1 kit due for a match-list check and 1 due for a yearly rerun. Open the app to see which.')
+    expect(msg).toBe('OneFamily: 1 kit due for a match-list check and 1 due for a yearly rerun. Open the app to see which.')
     expect(msg).not.toContain('Secret')
   })
   it('a recent full run means no rerun is due, even if the export is old (test audit 2026-11-10)', () => {

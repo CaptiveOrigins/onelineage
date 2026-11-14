@@ -1,5 +1,5 @@
 /**
- * Optional masking for anything shared while privacy mode is on (OneLineage plan section 2b). Years and places
+ * Optional masking for anything shared while privacy mode is on (OneFamily plan section 2b). Years and places
  * can identify a family even under stand-in names. Each is off by default, and is applied only when the
  * person chooses it for a share or an export.
  */

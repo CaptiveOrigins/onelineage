@@ -8,7 +8,7 @@
  * A problem refuses the whole file. Nothing is guessed. A layout it doesn't recognise is refused, not read
  * as best it can.
  */
-import { ImportRefused, type Issue, sha256Hex, SYNTHETIC_SOURCES, type TermsRegister } from '@captiveorigins/onelineage-core'
+import { ImportRefused, type Issue, sha256Hex, SYNTHETIC_SOURCES, type TermsRegister } from '@extantape/onefamily-core'
 
 export type RawService = 'ancestry' | '23andme' | 'myheritage' | 'ftdna' | 'livingdna'
 
@@ -76,7 +76,7 @@ export async function importRawDna(input: RawInput): Promise<RawImport> {
     throw new ImportRefused([{ severity: 'error', code: 'file.encoding', message: 'not a text file; zipped downloads need unzipping first', file: input.file }])
   }
   const service = detectRawService(text)
-  if (!service) throw new ImportRefused([{ severity: 'error', code: 'raw.layout', message: "this isn't a raw-data layout OneLineage recognises", file: input.file }])
+  if (!service) throw new ImportRefused([{ severity: 'error', code: 'raw.layout', message: "this isn't a raw-data layout OneFamily recognises", file: input.file }])
   if (!SYNTHETIC_SOURCES.has(input.source ?? '')) input.terms.require(service, 'site_export')
 
   const meta = (re: RegExp) => re.exec(text.slice(0, 4000))?.[1]?.trim() ?? null

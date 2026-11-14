@@ -1,8 +1,8 @@
 {
-  "name": "@captiveorigins/onelineage-connectors",
+  "name": "@extantape/onefamily-connectors",
   "version": "0.0.0",
   "private": true,
-  "description": "OneLineage connectors: importers for the files people export themselves, each checked against the terms register, with loud schema checks and provenance on every record.",
+  "description": "OneFamily connectors: importers for the files people export themselves, each checked against the terms register, with loud schema checks and provenance on every record.",
   "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "sideEffects": false,
@@ -16,9 +16,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@captiveorigins/onelineage-core": "workspace:*"
+    "@extantape/onefamily-core": "workspace:*"
   },
   "devDependencies": {
-    "@captiveorigins/onelineage-simulate": "workspace:*"
+    "@extantape/onefamily-simulate": "workspace:*"
   }
 }

@@ -3,7 +3,7 @@
  * format published maps commonly use ("chromosome id cM position" per line, whitespace-separated). Between
  * listed points it interpolates linearly; past the ends it extends at the nearest interval's rate.
  *
- * OneLineage doesn't ship a map until its license is confirmed (see the repo's docs/decisions.md).
+ * OneFamily doesn't ship a map until its license is confirmed (see the repo's docs/decisions.md).
  * Without one, comparisons use the approximate 1 cM per Mb rule and say so.
  */
 import type { GeneticMap } from './compare.js'

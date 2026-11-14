@@ -110,7 +110,7 @@ export function ExtensionScreen({ view, onView, kits }: { view: ExtensionView | 
       <section className="ol-card">
         <h2 style={{ marginTop: 0 }}>Connection</h2>
         <p role="status">
-          {view.connected ? `Connected to the extension (${view.extensionId}).` : 'The extension isn’t connected. Open Chrome with the OneLineage extension turned on.'}
+          {view.connected ? `Connected to the extension (${view.extensionId}).` : 'The extension isn’t connected. Open Chrome with the OneFamily extension turned on.'}
         </p>
         <p className="ol-hint">
           The extension stores nothing and reaches this app only through Chrome’s native messaging. It shows match details in its side panel, never in the website.
@@ -157,7 +157,7 @@ export function ExtensionScreen({ view, onView, kits }: { view: ExtensionView | 
           </button>
         </form>
         <p className="ol-hint">
-          Chrome also needs the native host installed for this build. In Terminal, from the OneLineage folder, run{' '}
+          Chrome also needs the native host installed for this build. In Terminal, from the OneFamily folder, run{' '}
           <code>node apps/desktop/host-dist/install-native-host.mjs --extension-id {view.developerIds[0] ?? '<id>'}</code>, then restart Chrome. Add{' '}
           <code>--dry-run</code> to see what it would write first.
         </p>

@@ -1,6 +1,6 @@
 /**
  * The host as the Mac app runs it: one JSON request per line on stdin, one JSON reply per line on stdout,
- * in order. Nothing else is written to stdout. The state folder comes from ONELINEAGE_STATE_DIR.
+ * in order. Nothing else is written to stdout. The state folder comes from ONEFAMILY_STATE_DIR.
  */
 import { createInterface } from 'node:readline'
 import { createHost, defaultStateDir } from './handlers'
@@ -8,7 +8,7 @@ import { keychainStore } from './keychain'
 import { noKeyStore } from './keys'
 import { listenForExtension, socketPath } from './extension/socket'
 
-const stateDir = process.env['ONELINEAGE_STATE_DIR'] || defaultStateDir()
+const stateDir = process.env['ONEFAMILY_STATE_DIR'] || defaultStateDir()
 // The real Keychain on a Mac. Tests and the browser dev server never use it.
 const host = createHost({ stateDir, keys: process.platform === 'darwin' ? keychainStore() : noKeyStore })
 

@@ -1,4 +1,4 @@
-# onelineage
+# onefamily
 
 Registered in the owner's ops process (`~/Code/ops`). Area: `genealogy`. Created 2026-11-10 from the ops starter kit.
 

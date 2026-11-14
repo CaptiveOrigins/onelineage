@@ -16,7 +16,7 @@ export function nativeHostManifest(p: { path: string; extensionIds: readonly str
   if (!p.path.startsWith('/')) throw new Error('The host path must be absolute; Chrome requires it on macOS.')
   return {
     name: NATIVE_HOST_NAME,
-    description: 'OneLineage: lets the OneLineage extension talk to the OneLineage app on this Mac.',
+    description: 'OneFamily: lets the OneFamily extension talk to the OneFamily app on this Mac.',
     path: p.path,
     type: 'stdio',
     allowed_origins: [...new Set(p.extensionIds)].map((id) => `chrome-extension://${id}/`),
@@ -33,16 +33,16 @@ export type InstallFile = { path: string; content: string; mode: number }
 
 /**
  * What the install script writes: a small launcher that starts the host with Node, and the manifest in
- * Chrome's per-user NativeMessagingHosts folder. The launcher lives in OneLineage's own folder.
+ * Chrome's per-user NativeMessagingHosts folder. The launcher lives in OneFamily's own folder.
  */
 export function installPlan(p: { home: string; node: string; hostScript: string; developerIds: readonly string[] }): InstallFile[] {
   const ids = [...(PUBLISHED_EXTENSION_ID ? [PUBLISHED_EXTENSION_ID] : []), ...p.developerIds]
-  const launcher = join(p.home, 'Library', 'Application Support', 'OneLineage', 'native-host', 'onelineage-native-host')
+  const launcher = join(p.home, 'Library', 'Application Support', 'OneFamily', 'native-host', 'onefamily-native-host')
   const q = (s: string) => `'${s.replace(/'/g, `'\\''`)}'`
   return [
     {
       path: launcher,
-      content: `#!/bin/sh\n# Started by Chrome for the OneLineage extension. Written by OneLineage's install script.\nexec ${q(p.node)} ${q(p.hostScript)} "$@"\n`,
+      content: `#!/bin/sh\n# Started by Chrome for the OneFamily extension. Written by OneFamily's install script.\nexec ${q(p.node)} ${q(p.hostScript)} "$@"\n`,
       mode: 0o755,
     },
     {

@@ -1,12 +1,12 @@
 # Proposal to OnePedigree: uncertain parentage and dual parentage
 
-**Outcome, 2026-11-10 (Science):** accepted, with one change. Part 1 uses OnePedigree's `Parentage.uncertainParents` (OneLineage needs OnePedigree 0.1.0-alpha.21 or later; npm had alpha.18 on 2026-11-10): each candidate has a `probability`, and the remainder is someone unrecorded. OneLineage adopts that, with no parallel `candidates` field. Still to come in OnePedigree: an optional `basis` per slot, and an opt-in view drawing candidates as weighted branches (Science K308). `kind` on ParentReference is accepted in principle (Science K309). No dates yet. The original proposal follows.
+**Outcome, 2026-11-10 (Science):** accepted, with one change. Part 1 uses OnePedigree's `Parentage.uncertainParents` (OneFamily needs OnePedigree 0.1.0-alpha.21 or later; npm had alpha.18 on 2026-11-10): each candidate has a `probability`, and the remainder is someone unrecorded. OneFamily adopts that, with no parallel `candidates` field. Still to come in OnePedigree: an optional `basis` per slot, and an opt-in view drawing candidates as weighted branches (Science K308). `kind` on ParentReference is accepted in principle (Science K309). No dates yet. The original proposal follows.
 
-From OneLineage (Genealogy lead), 2026-11-10. For OnePedigree's maintainers (Science) to accept, change or decline. OneLineage only draws pedigrees through `@captiveorigins/onepedigree-react`, so it adopts whatever OnePedigree releases, and changes nothing in OnePedigree itself.
+From OneFamily (Genealogy lead), 2026-11-10. For OnePedigree's maintainers (Science) to accept, change or decline. OneFamily only draws pedigrees through `@extantape/onepedigree-react`, so it adopts whatever OnePedigree releases, and changes nothing in OnePedigree itself.
 
 ## Why
 
-OneLineage builds family trees from DNA, and reports odds rather than single answers. Two things it needs to draw, OnePedigree can't express yet. Both come up in animal pedigrees too.
+OneFamily builds family trees from DNA, and reports odds rather than single answers. Two things it needs to draw, OnePedigree can't express yet. Both come up in animal pedigrees too.
 
 ## 1. Candidate parents with weights
 
@@ -52,7 +52,7 @@ type ParentReference = { individual: IndividualId; role?: ParentRole | null; kin
 
 ## 3. Status styling (likely no change needed)
 
-OneLineage marks people as confirmed, supported, hypothesis or placeholder. Host data (`data`) plus the CSS variables may already cover this. Science can confirm.
+OneFamily marks people as confirmed, supported, hypothesis or placeholder. Host data (`data`) plus the CSS variables may already cover this. Science can confirm.
 
 ## Compatibility
 

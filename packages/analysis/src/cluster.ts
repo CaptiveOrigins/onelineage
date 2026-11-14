@@ -2,12 +2,12 @@
  * The whole grouping run for one kit: network, consensus groups and side splits, with a stamp of what went in
  * and which settings and seeds were used (S3, S12). It reads only DNA figures: no trees, names or notes.
  */
-import type { MatchObservation, SharedMatchLink } from '@captiveorigins/onelineage-core'
+import type { MatchObservation, SharedMatchLink } from '@extantape/onefamily-core'
 import { consensusClusters, type ConsensusOptions } from './consensus.js'
 import { buildMatchGraph, cmp, type Exclusion, type GraphOptions } from './graph.js'
 import { nestedSplit, type SplitOptions, type SplitStep } from './split.js'
 
-export const ENGINE = { name: '@captiveorigins/onelineage-analysis', version: '0.1.0' } as const
+export const ENGINE = { name: '@extantape/onefamily-analysis', version: '0.1.0' } as const
 
 export type ClusterOptions = { graph?: GraphOptions; consensus?: ConsensusOptions; split?: SplitOptions }
 

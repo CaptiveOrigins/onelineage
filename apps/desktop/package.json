@@ -1,9 +1,9 @@
 {
-  "name": "onelineage-desktop",
+  "name": "onefamily-desktop",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "OneLineage for Mac: a library folder of your DNA match data, the use-policy and backup setup, and kits, matches, a theory page and backups on a made-up demo family.",
+  "description": "OneFamily for Mac: a library folder of your DNA match data, the use-policy and backup setup, and kits, matches, a theory page and backups on a made-up demo family.",
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "dev": "vite",
@@ -17,13 +17,13 @@
     "app:build": "tauri build"
   },
   "dependencies": {
-    "@captiveorigins/onelineage-analysis": "workspace:*",
-    "@captiveorigins/onelineage-connectors": "workspace:*",
-    "@captiveorigins/onelineage-core": "workspace:*",
-    "@captiveorigins/onelineage-library": "workspace:*",
-    "@captiveorigins/onelineage-simulate": "workspace:*",
-    "@captiveorigins/onepedigree-core": "0.1.0-alpha.18",
-    "@captiveorigins/onepedigree-react": "0.1.0-alpha.18",
+    "@extantape/onefamily-analysis": "workspace:*",
+    "@extantape/onefamily-connectors": "workspace:*",
+    "@extantape/onefamily-core": "workspace:*",
+    "@extantape/onefamily-library": "workspace:*",
+    "@extantape/onefamily-simulate": "workspace:*",
+    "@extantape/onepedigree-core": "0.1.0-alpha.22",
+    "@extantape/onepedigree-react": "0.1.0-alpha.22",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2",
     "@tauri-apps/plugin-notification": "^2",

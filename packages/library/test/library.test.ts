@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import type { MatchObservation } from '@captiveorigins/onelineage-core'
+import type { MatchObservation } from '@extantape/onefamily-core'
 import {
   appendDecision, backupTo, backupVerdict, buildCache, cacheDigest, canLowerBypass, checkBackup, decisionsPath, DecisionLogBroken, decrypt, encrypt,
   initLibrary, isCloudSynced, listFiles, openLibrary, prune, readDecisions, restoreBackup, storeExport, verifyExports,
 } from '../src/index.js'
 
-const tmp = () => mkdtempSync(join(tmpdir(), 'onelineage-'))
+const tmp = () => mkdtempSync(join(tmpdir(), 'onefamily-'))
 const enc = new TextEncoder()
 const key = new Uint8Array(32).fill(7)
 
@@ -25,7 +25,7 @@ describe('the library folder', () => {
     const dir = tmp()
     expect(initLibrary(dir).format).toBe(1)
     expect(openLibrary(dir).format).toBe(1)
-    expect(() => openLibrary(tmp())).toThrow(/isn't a OneLineage library/)
+    expect(() => openLibrary(tmp())).toThrow(/isn't a OneFamily library/)
   })
 
   it('stores exports frozen: read-only, with a manifest, and never replaced', async () => {
@@ -99,7 +99,7 @@ describe('backups', () => {
     expect(isCloudSynced('/Users/x/Dropbox/Backups')).toBe(true)
     expect(isCloudSynced('/Volumes/External/Backups')).toBe(false)
     const lib = await sampleLibrary()
-    const cloud = join(tmp(), 'Dropbox', 'OneLineage')
+    const cloud = join(tmp(), 'Dropbox', 'OneFamily')
     mkdirSync(cloud, { recursive: true })
     await expect(backupTo(lib, cloud)).rejects.toThrow(/must be encrypted/)
     const r = await backupTo(lib, cloud, { encryptWith: key })

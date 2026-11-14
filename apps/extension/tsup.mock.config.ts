@@ -8,7 +8,7 @@ export default defineConfig({
   target: 'node22',
   outDir: 'mock-dist',
   outExtension: () => ({ js: '.mjs' }),
-  noExternal: [/^@captiveorigins\//],
+  noExternal: [/^@extantape\//],
   external: [/^node:/],
   clean: true,
 })

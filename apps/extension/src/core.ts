@@ -55,7 +55,7 @@ export function createCore(d: CoreDeps) {
   let summaryGrant: string | null = null
   let runGrant: string | null = null
   let runId: string | null = null
-  const state: PanelState = { connected: false, connection: 'Connecting to OneLineage…', privacy: false, run: null, summary: null, notice: null, waiting: false }
+  const state: PanelState = { connected: false, connection: 'Connecting to OneFamily…', privacy: false, run: null, summary: null, notice: null, waiting: false }
   const show = () => d.onPanel({ ...state, run: state.run && { ...state.run }, summary: state.summary && { ...state.summary } })
 
   function ask(body: ExtensionRequestBody): Promise<Response> {
@@ -64,7 +64,7 @@ export function createCore(d: CoreDeps) {
       // The app refuses a request nobody answers; this is a backstop if the link drops.
       const timer = setTimeout(() => {
         asks.delete(id)
-        resolve({ type: 'response', id, ok: false, error: 'No answer from OneLineage.' })
+        resolve({ type: 'response', id, ok: false, error: 'No answer from OneFamily.' })
       }, REQUEST_TIMEOUT_MS + 15_000)
       asks.set(id, { resolve, timer })
       d.sendNative({ ...body, id } as ExtensionMessage)
@@ -154,7 +154,7 @@ export function createCore(d: CoreDeps) {
       if (!m || typeof m !== 'object') return
       if (m.type === 'welcome') {
         state.connected = m.version === WIRE_VERSION
-        state.connection = state.connected ? null : 'OneLineage and this extension are different versions. Update both.'
+        state.connection = state.connected ? null : 'OneFamily and this extension are different versions. Update both.'
         state.privacy = m.privacy === true
         d.setBadge(state.privacy)
         show()
@@ -195,14 +195,14 @@ export function createCore(d: CoreDeps) {
 
     disconnected(why: string | null) {
       state.connected = false
-      state.connection = why ?? 'OneLineage closed the connection.'
+      state.connection = why ?? 'OneFamily closed the connection.'
       grants.clear()
       state.summary = null
       summaryGrant = null
       stopFlag = true
       for (const [id, a] of asks) {
         clearTimeout(a.timer)
-        a.resolve({ type: 'response', id, ok: false, error: 'OneLineage closed the connection.' })
+        a.resolve({ type: 'response', id, ok: false, error: 'OneFamily closed the connection.' })
       }
       asks.clear()
       show()
@@ -236,7 +236,7 @@ export function createCore(d: CoreDeps) {
       if (!page || !kit) return notice('Open the mock site’s match list or a match’s page first.')
       await withWaiting(async () => {
         const r = await ask({ type: 'request', request: 'pageExport', kit: decodeURIComponent(kit), page })
-        notice(r.ok ? 'Handed over to OneLineage.' : r.error)
+        notice(r.ok ? 'Handed over to OneFamily.' : r.error)
       })
     },
 
@@ -247,7 +247,7 @@ export function createCore(d: CoreDeps) {
       if (!kit) return notice('Open the mock site’s match list first.')
       await withWaiting(async () => {
         const r = await ask({ type: 'request', request: 'newMatchesToFetch', kit: decodeURIComponent(kit) })
-        notice(r.ok ? `OneLineage has ${((r.data as { matches: string[] }).matches ?? []).length} new matches to fetch. Start the run in the app.` : r.error)
+        notice(r.ok ? `OneFamily has ${((r.data as { matches: string[] }).matches ?? []).length} new matches to fetch. Start the run in the app.` : r.error)
       })
     },
 
@@ -261,7 +261,7 @@ export function createCore(d: CoreDeps) {
   }
   async function withWaiting(f: () => Promise<void>) {
     state.waiting = true
-    state.notice = 'Waiting for your answer in OneLineage…'
+    state.notice = 'Waiting for your answer in OneFamily…'
     show()
     try {
       await f()

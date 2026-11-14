@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { fileURLToPath } from 'node:url'
-import { compareKits, triangulate } from '@captiveorigins/onelineage-core'
+import { compareKits, triangulate } from '@extantape/onefamily-core'
 import { loadTermsRegister } from '../../core/src/node.js'
-import { AlleleBook, genotypesOf, makePanel, shared, standardFamily, writeRaw, type Person } from '@captiveorigins/onelineage-simulate'
+import { AlleleBook, genotypesOf, makePanel, shared, standardFamily, writeRaw, type Person } from '@extantape/onefamily-simulate'
 import { importRawDna } from '../src/index.js'
 
 // A dense made-up panel (about 50 markers per cM, 175,000 in all), closer to a real chip.

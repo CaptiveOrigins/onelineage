@@ -10,7 +10,7 @@ function devHost(): Plugin {
   let host: { handle: (method: string, params: unknown) => Promise<unknown> } | null = null
   let loadedFrom: unknown = null
   return {
-    name: 'onelineage-dev-host',
+    name: 'onefamily-dev-host',
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use('/__host', (req, res) => {
@@ -27,7 +27,7 @@ function devHost(): Plugin {
           try {
             const mod = (await server.ssrLoadModule('/host/handlers.ts')) as typeof import('./host/handlers')
             if (!host || loadedFrom !== mod.createHost) {
-              host = mod.createHost({ stateDir: process.env.ONELINEAGE_STATE_DIR ?? mod.defaultStateDir() })
+              host = mod.createHost({ stateDir: process.env.ONEFAMILY_STATE_DIR ?? mod.defaultStateDir() })
               loadedFrom = mod.createHost
             }
             const { method, params } = JSON.parse(body) as { method: string; params: unknown }

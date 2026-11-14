@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { fileURLToPath } from 'node:url'
-import { ibdStates, phaseThreeSiblings, siblingCrossovers, type IbdStretch } from '@captiveorigins/onelineage-core'
+import { ibdStates, phaseThreeSiblings, siblingCrossovers, type IbdStretch } from '@extantape/onefamily-core'
 import { loadTermsRegister } from '../../core/src/node.js'
-import { AlleleBook, child, founderGenome, genotypesOf, makePanel, Rng, writeRaw, type Genome } from '@captiveorigins/onelineage-simulate'
+import { AlleleBook, child, founderGenome, genotypesOf, makePanel, Rng, writeRaw, type Genome } from '@extantape/onefamily-simulate'
 import { importRawDna } from '../src/index.js'
 
 const terms = loadTermsRegister(fileURLToPath(new URL('../../../terms', import.meta.url)))

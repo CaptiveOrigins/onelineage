@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { shared, standardFamily, type Family, type Person } from '@captiveorigins/onelineage-simulate'
+import { shared, standardFamily, type Family, type Person } from '@extantape/onefamily-simulate'
 import { formatOdds, scoreHypotheses, type Observation, type TreePerson } from '../src/index.js'
 
 const family: Family = standardFamily({ seed: 21 })

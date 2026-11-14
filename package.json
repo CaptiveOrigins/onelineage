@@ -1,7 +1,7 @@
 {
-  "name": "onelineage",
+  "name": "onefamily",
   "private": true,
-  "description": "OneLineage: DNA-first genetic genealogy for Mac. Groups your matches before your tree can bias them, and gives odds on every family-tree hypothesis. Runs locally, no servers.",
+  "description": "OneFamily: DNA-first genetic genealogy for Mac. Groups your matches before your tree can bias them, and gives odds on every family-tree hypothesis. Runs locally, no servers.",
   "keywords": [
     "genetic-genealogy",
     "dna",
@@ -12,9 +12,9 @@
     "local-first",
     "privacy"
   ],
-  "homepage": "https://github.com/CaptiveOrigins/onelineage#readme",
+  "homepage": "https://github.com/ExtantApe/OneFamily#readme",
   "bugs": {
-    "url": "https://github.com/CaptiveOrigins/onelineage/issues"
+    "url": "https://github.com/ExtantApe/OneFamily/issues"
   },
   "license": "SEE LICENSE IN LICENSE",
   "type": "module",

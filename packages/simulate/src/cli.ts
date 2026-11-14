@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Write a planted family to disk: one folder per family kit, in Genealogy Assistant's CSV shapes, plus truth.json.
- *   onelineage-simulate --seed 1 --out fixtures/generated/planted-1
+ *   onefamily-simulate --seed 1 --out fixtures/generated/planted-1
  */
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'

@@ -1,6 +1,6 @@
 /**
  * A tiny made-up genealogy site, served on 127.0.0.1 only, for building and testing the extension. Every person
- * on it comes from a planted family in @captiveorigins/onelineage-simulate. It is not a copy of any real site.
+ * on it comes from a planted family in @extantape/onefamily-simulate. It is not a copy of any real site.
  *
  * Pages declare their kind on <body data-page-kind="…"> and carry a machine-readable export block, which is
  * all the extension reads. There's a challenge page and a sign-in page, and options to show them after a
@@ -8,7 +8,7 @@
  */
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 import type { AddressInfo } from 'node:net'
-import { exportKit, Rng, standardFamily } from '@captiveorigins/onelineage-simulate'
+import { exportKit, Rng, standardFamily } from '@extantape/onefamily-simulate'
 
 export const MOCK_PAGE_SIZE = 20
 
@@ -30,12 +30,12 @@ const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
 const scriptJson = (v: unknown) => JSON.stringify(v).replace(/</g, '\\u003c')
 
 function page(kind: string, title: string, body: string, data?: unknown): string {
-  const block = data === undefined ? '' : `\n<script type="application/json" id="onelineage-export">${scriptJson(data)}</script>`
+  const block = data === undefined ? '' : `\n<script type="application/json" id="onefamily-export">${scriptJson(data)}</script>`
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>${esc(title)} · Made-up genealogy site</title>
 <style>body{font:15px/1.5 system-ui,sans-serif;max-width:46rem;margin:2rem auto;padding:0 1rem}table{border-collapse:collapse}td,th{padding:4px 10px;border-bottom:1px solid #ccc;text-align:left}.mock{background:#fff3cd;padding:6px 10px}</style>
 </head><body data-page-kind="${kind}">
-<p class="mock">A made-up site for testing OneLineage. Every person here is invented.</p>
+<p class="mock">A made-up site for testing OneFamily. Every person here is invented.</p>
 <h1>${esc(title)}</h1>
 ${body}${block}
 </body></html>

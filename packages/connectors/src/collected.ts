@@ -4,7 +4,7 @@
  * Today the only site that may be collected from is the local mock site (made-up data). Real services are
  * refused by the terms register.
  */
-import { ImportRefused, type Issue, type MatchObservation, sha256Hex, SYNTHETIC_SOURCES, type TermsRegister } from '@captiveorigins/onelineage-core'
+import { ImportRefused, type Issue, type MatchObservation, sha256Hex, SYNTHETIC_SOURCES, type TermsRegister } from '@extantape/onefamily-core'
 
 const ID = /^[A-Za-z0-9-]{6,64}$/
 

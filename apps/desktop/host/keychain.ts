@@ -4,7 +4,7 @@
  * library, and the window only ever sees a recovery copy, when the person asks for one.
  *
  * Stated limit: the Keychain item is created by the `security` tool, so the access list trusts that tool
- * rather than OneLineage's own signature. Another program running as the same user could ask the tool
+ * rather than OneFamily's own signature. Another program running as the same user could ask the tool
  * for it. Moving the item to an access list tied to the signed app comes with app signing, before any
  * release (task K338 and the signing decision).
  */
@@ -12,7 +12,7 @@ import { execFile } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import type { KeyStore } from './keys'
 
-export const KEYCHAIN_SERVICE = 'OneLineage backup key'
+export const KEYCHAIN_SERVICE = 'OneFamily backup key'
 
 /** Runs `security` with arguments and no shell. Injected so tests never touch the real Keychain. */
 export type SecurityRunner = (args: string[]) => Promise<{ code: number; stdout: string }>
@@ -46,7 +46,7 @@ export function keychainStore(run: SecurityRunner = realSecurity): KeyStore & { 
       const existing = await read(library)
       if (existing) return existing
       const key = globalThis.crypto.getRandomValues(new Uint8Array(32))
-      const r = await run(['add-generic-password', '-s', KEYCHAIN_SERVICE, '-a', accountFor(library), '-l', 'OneLineage backup key', '-j', 'Encrypts this OneLineage library’s backups to cloud-synced folders. Losing it makes those backups unreadable.', '-w', Buffer.from(key).toString('base64')])
+      const r = await run(['add-generic-password', '-s', KEYCHAIN_SERVICE, '-a', accountFor(library), '-l', 'OneFamily backup key', '-j', 'Encrypts this OneFamily library’s backups to cloud-synced folders. Losing it makes those backups unreadable.', '-w', Buffer.from(key).toString('base64')])
       if (r.code !== 0) throw new Error(`the Keychain refused to store a new backup key (security exit ${r.code})`)
       // Read it back, so a key that didn't stick is never used to encrypt anything.
       const check = await read(library)
