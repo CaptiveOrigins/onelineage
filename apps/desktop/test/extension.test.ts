@@ -3,8 +3,8 @@ import { mkdtempSync, readdirSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { PassThrough } from 'node:stream'
-import { CapabilityRefused } from '@captiveorigins/onelineage-core'
-import { decisionsPath, readDecisions } from '@captiveorigins/onelineage-library'
+import { CapabilityRefused } from '@extantape/onefamily-core'
+import { decisionsPath, readDecisions } from '@extantape/onefamily-library'
 import { createExtensionBridge, ExtensionRefused, MOCK_SITE, type ExtensionData, type HandoverEntry } from '../host/extension/bridge'
 import { encodeFrame, FrameReader, FramingError, MAX_TO_CHROME } from '../host/extension/framing'
 import { installPlan, manifestTemplate, nativeHostManifest } from '../host/extension/manifest'
@@ -105,11 +105,11 @@ describe('only our extension can connect', () => {
   })
 
   it('keeps the committed manifest template in step, and plans the install without writing anything', () => {
-    expect(readFileSync(new URL('../native-host/org.captiveorigins.onelineage.json.template', import.meta.url), 'utf8')).toBe(manifestTemplate())
-    const plan = installPlan({ home: '/Users/someone', node: '/opt/homebrew/bin/node', hostScript: '/Apps/OneLineage/native-host.mjs', developerIds: [DEV] })
+    expect(readFileSync(new URL('../native-host/com.extantape.onefamily.json.template', import.meta.url), 'utf8')).toBe(manifestTemplate())
+    const plan = installPlan({ home: '/Volumes/Test/someone', node: '/opt/homebrew/bin/node', hostScript: '/Apps/OneFamily/native-host.mjs', developerIds: [DEV] })
     expect(plan.map((f) => f.path)).toEqual([
-      '/Users/someone/Library/Application Support/OneLineage/native-host/onelineage-native-host',
-      '/Users/someone/Library/Application Support/Google/Chrome/NativeMessagingHosts/org.captiveorigins.onelineage.json',
+      '/Volumes/Test/someone/Library/Application Support/OneFamily/native-host/onefamily-native-host',
+      '/Volumes/Test/someone/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.extantape.onefamily.json',
     ])
     expect(JSON.parse(plan[1]!.content).allowed_origins).toEqual([`chrome-extension://${DEV}/`])
     expect(JSON.parse(plan[1]!.content).path).toBe(plan[0]!.path)
@@ -146,7 +146,7 @@ describe('requests started in the extension need an OK in the app', () => {
     expect(calls).toEqual([])
     expect(bridge.status().pending.map((p) => p.id)).toEqual(['q1'])
     await bridge.decide('q1', 'deny')
-    expect(sent).toEqual([{ type: 'response', id: 'q1', ok: false, error: 'Denied in OneLineage.' }])
+    expect(sent).toEqual([{ type: 'response', id: 'q1', ok: false, error: 'Denied in OneFamily.' }])
     expect(calls).toEqual([])
     await expect(bridge.decide('q1', 'once')).rejects.toThrow(/already been answered/)
   })
@@ -156,7 +156,7 @@ describe('requests started in the extension need an OK in the app', () => {
     await conn().receive({ type: 'request', id: 'q1', request: 'newMatchesToFetch', kit: 'K' })
     advance(2 * 60 * 1000 + 1)
     bridge.expire()
-    expect(sent).toEqual([{ type: 'response', id: 'q1', ok: false, error: 'Nobody answered in OneLineage in time, so the answer is no.' }])
+    expect(sent).toEqual([{ type: 'response', id: 'q1', ok: false, error: 'Nobody answered in OneFamily in time, so the answer is no.' }])
   })
 
   it('allow once serves that request only, with the minimum, and logs it', async () => {
@@ -366,7 +366,7 @@ describe('the app host', () => {
       { type: 'response', id: 'x', ok: false, error: '"readLibrary" isn’t on the list of things the extension can ask for.' },
     ])
     const refused = await talk(`chrome-extension://${OTHER}/`, [{ type: 'hello', version: 1 }])
-    expect(refused.got).toEqual([{ type: 'response', id: 'hello', ok: false, error: expect.stringMatching(/isn’t the OneLineage extension/) }])
+    expect(refused.got).toEqual([{ type: 'response', id: 'hello', ok: false, error: expect.stringMatching(/isn’t the OneFamily extension/) }])
     expect(refused.code).toBe(1)
     const notChrome = await talk('https://example.com/', [])
     expect(notChrome.got).toEqual([{ type: 'response', id: 'hello', ok: false, error: expect.stringMatching(/Only a Chrome extension/) }])

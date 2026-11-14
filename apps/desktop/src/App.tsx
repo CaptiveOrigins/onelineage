@@ -131,7 +131,7 @@ export function App() {
   }, [])
   useEffect(() => void refresh(), [refresh])
 
-  if (!status) return <p style={{ padding: 20 }}>{error ? `OneLineage couldn’t start its file helper: ${error}` : 'Opening…'}</p>
+  if (!status) return <p style={{ padding: 20 }}>{error ? `OneFamily couldn’t start its file helper: ${error}` : 'Opening…'}</p>
 
   const demo = Boolean(status.current?.demo)
   const step = demo ? 'ready' : firstLaunchStep(flowInputs(status, backups))
@@ -164,7 +164,7 @@ export function App() {
       <div className="ol-app">
         <header className="ol-toolbar">
           <span className="ol-title">
-            <Icon of={Dna} size={18} /> OneLineage
+            <Icon of={Dna} size={18} /> OneFamily
           </span>
           {demo && <span className="ol-badge ol-badge-demo">Made-up demo family</span>}
           <nav className="ol-nav" aria-label="Screens">
@@ -321,5 +321,5 @@ async function notifyDue() {
   const n = await import('@tauri-apps/plugin-notification')
   let ok = await n.isPermissionGranted()
   if (!ok) ok = (await n.requestPermission()) === 'granted'
-  if (ok) n.sendNotification({ title: 'OneLineage', body: claim.message })
+  if (ok) n.sendNotification({ title: 'OneFamily', body: claim.message })
 }

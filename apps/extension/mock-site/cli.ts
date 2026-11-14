@@ -1,4 +1,4 @@
-/** Starts the mock site for trying the extension by hand: pnpm --filter onelineage-extension mock-site [port]. */
+/** Starts the mock site for trying the extension by hand: pnpm --filter onefamily-extension mock-site [port]. */
 import { startMockSite } from './server'
 
 const port = Number(process.argv[2] ?? 8787)

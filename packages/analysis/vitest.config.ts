@@ -7,9 +7,9 @@ export default defineConfig({
   test: { testTimeout: 60_000 },
   resolve: {
     alias: {
-      '@captiveorigins/onelineage-core': fileURLToPath(new URL('../core/src/index.ts', import.meta.url)),
-      '@captiveorigins/onelineage-connectors': fileURLToPath(new URL('../connectors/src/index.ts', import.meta.url)),
-      '@captiveorigins/onelineage-simulate': fileURLToPath(new URL('../simulate/src/index.ts', import.meta.url)),
+      '@extantape/onefamily-core': fileURLToPath(new URL('../core/src/index.ts', import.meta.url)),
+      '@extantape/onefamily-connectors': fileURLToPath(new URL('../connectors/src/index.ts', import.meta.url)),
+      '@extantape/onefamily-simulate': fileURLToPath(new URL('../simulate/src/index.ts', import.meta.url)),
     },
   },
 })

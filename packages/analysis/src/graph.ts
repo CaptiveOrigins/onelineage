@@ -2,7 +2,7 @@
  * The match network: one node per match, one edge per shared-match link, weighted by the cM the two matches
  * share with each other.
  */
-import type { MatchObservation, SharedMatchLink } from '@captiveorigins/onelineage-core'
+import type { MatchObservation, SharedMatchLink } from '@extantape/onefamily-core'
 
 /** An undirected weighted graph on whole-number nodes. Self-loops are kept apart, in `self`. */
 export type Graph = {

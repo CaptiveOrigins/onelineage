@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CapabilityRefused, ImportRefused, registerFromFiles } from '@captiveorigins/onelineage-core'
+import { CapabilityRefused, ImportRefused, registerFromFiles } from '@extantape/onefamily-core'
 import { importCollectedPages } from '../src/index.js'
 
 const enc = new TextEncoder()

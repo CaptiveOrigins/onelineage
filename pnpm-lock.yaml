@@ -23,27 +23,27 @@ importers:
 
   apps/desktop:
     dependencies:
-      '@captiveorigins/onelineage-analysis':
+      '@extantape/onefamily-analysis':
         specifier: workspace:*
         version: link:../../packages/analysis
-      '@captiveorigins/onelineage-connectors':
+      '@extantape/onefamily-connectors':
         specifier: workspace:*
         version: link:../../packages/connectors
-      '@captiveorigins/onelineage-core':
+      '@extantape/onefamily-core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@captiveorigins/onelineage-library':
+      '@extantape/onefamily-library':
         specifier: workspace:*
         version: link:../../packages/library
-      '@captiveorigins/onelineage-simulate':
+      '@extantape/onefamily-simulate':
         specifier: workspace:*
         version: link:../../packages/simulate
-      '@captiveorigins/onepedigree-core':
-        specifier: 0.1.0-alpha.18
-        version: 0.1.0-alpha.18
-      '@captiveorigins/onepedigree-react':
-        specifier: 0.1.0-alpha.18
-        version: 0.1.0-alpha.18(react@19.3.1)
+      '@extantape/onepedigree-core':
+        specifier: 0.1.0-alpha.22
+        version: 0.1.0-alpha.22
+      '@extantape/onepedigree-react':
+        specifier: 0.1.0-alpha.22
+        version: 0.1.0-alpha.22(react@19.3.1)
       '@tauri-apps/api':
         specifier: ^2
         version: 2.12.4
@@ -93,10 +93,10 @@ importers:
 
   apps/extension:
     devDependencies:
-      '@captiveorigins/onelineage-core':
+      '@extantape/onefamily-core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@captiveorigins/onelineage-simulate':
+      '@extantape/onefamily-simulate':
         specifier: workspace:*
         version: link:../../packages/simulate
       '@types/node':
@@ -114,24 +114,24 @@ importers:
 
   packages/analysis:
     dependencies:
-      '@captiveorigins/onelineage-core':
+      '@extantape/onefamily-core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      '@captiveorigins/onelineage-connectors':
+      '@extantape/onefamily-connectors':
         specifier: workspace:*
         version: link:../connectors
-      '@captiveorigins/onelineage-simulate':
+      '@extantape/onefamily-simulate':
         specifier: workspace:*
         version: link:../simulate
 
   packages/connectors:
     dependencies:
-      '@captiveorigins/onelineage-core':
+      '@extantape/onefamily-core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      '@captiveorigins/onelineage-simulate':
+      '@extantape/onefamily-simulate':
         specifier: workspace:*
         version: link:../simulate
 
@@ -139,13 +139,13 @@ importers:
 
   packages/hypothesis:
     dependencies:
-      '@captiveorigins/onelineage-simulate':
+      '@extantape/onefamily-simulate':
         specifier: workspace:*
         version: link:../simulate
 
   packages/library:
     dependencies:
-      '@captiveorigins/onelineage-core':
+      '@extantape/onefamily-core':
         specifier: workspace:*
         version: link:../core
 
@@ -235,16 +235,6 @@ packages:
   '@babel/types@7.29.11':
     resolution: {integrity: sha512-WCsemW40Cpc6gouC1SrY6PBaZ+oLRlEVY9XBvZBI7il/HyUrb2nJ505wE1MHEFyDZNnrWDEuy4jL50WVHfTTSQ==}
     engines: {node: '>=6.9.0'}
-
-  '@captiveorigins/onepedigree-core@0.1.0-alpha.18':
-    resolution: {integrity: sha512-WGtqD9x+sQy5djSI8BWXRubJC0xwWcfXcyPcX2DGKc49laT2HwrC+kDb7fgXudlL6OmMCwvGoDwC9beznGqKMA==}
-    engines: {node: '>=22'}
-
-  '@captiveorigins/onepedigree-react@0.1.0-alpha.18':
-    resolution: {integrity: sha512-G+d5NZBsmEVsDUIOQ1h41omx6mwTFibBOysF8qaVJS/h96uGo5MQxyhE/kRvESdmWB9Mm4m0QDqU53ZDngd4yA==}
-    engines: {node: '>=22'}
-    peerDependencies:
-      react: '>=18.2'
 
   '@esbuild/aix-ppc64@0.27.7':
     resolution: {integrity: sha512-EKX3Qwmhz1eMdEJokhALr0YiD0lhQNwDqkPYyPhiSwKrh7/4KRjQc04sZ8db+5DVVnZ1LmbNDI1uAMPEUBnQPg==}
@@ -401,6 +391,16 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@extantape/onepedigree-core@0.1.0-alpha.22':
+    resolution: {integrity: sha512-3QebhOd6ga3YLW5/yPeCCyyKVFufW5vyR7+EOXKBMcb9+Uk6i20uW/TlNJ6ilb4m74UELcPbjSrdBYJLMA/hRw==}
+    engines: {node: '>=22'}
+
+  '@extantape/onepedigree-react@0.1.0-alpha.22':
+    resolution: {integrity: sha512-AR1n7n3kwpZO/aiIMGo5x/FWcCOJHWr3u9vAaUwm8wL+lCpCqLR2NUsY29qng7Ni0bGfDZok6ATdVdbniTT9oQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      react: '>=18.2'
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -1493,13 +1493,6 @@ snapshots:
       '@babel/helper-string-parser': 7.29.13
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@captiveorigins/onepedigree-core@0.1.0-alpha.18': {}
-
-  '@captiveorigins/onepedigree-react@0.1.0-alpha.18(react@19.3.1)':
-    dependencies:
-      '@captiveorigins/onepedigree-core': 0.1.0-alpha.18
-      react: 19.3.1
-
   '@esbuild/aix-ppc64@0.27.7':
     optional: true
 
@@ -1577,6 +1570,13 @@ snapshots:
 
   '@esbuild/win32-x64@0.27.7':
     optional: true
+
+  '@extantape/onepedigree-core@0.1.0-alpha.22': {}
+
+  '@extantape/onepedigree-react@0.1.0-alpha.22(react@19.3.1)':
+    dependencies:
+      '@extantape/onepedigree-core': 0.1.0-alpha.22
+      react: 19.3.1
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:

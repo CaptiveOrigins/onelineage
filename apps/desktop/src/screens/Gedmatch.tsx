@@ -11,7 +11,7 @@ const SETTINGS = [
 ] as const
 
 /**
- * The GEDmatch checklist. OneLineage never uploads anything. You upload on GEDmatch’s own page, then
+ * The GEDmatch checklist. OneFamily never uploads anything. You upload on GEDmatch’s own page, then
  * record the kit number and its privacy setting here.
  */
 export function GedmatchScreen() {
@@ -28,7 +28,7 @@ export function GedmatchScreen() {
   }
   return (
     <>
-      <p>GEDmatch takes raw DNA from every testing company, so it can find relatives who tested elsewhere. OneLineage never uploads: you do it on GEDmatch’s own site, and record the result here.</p>
+      <p>GEDmatch takes raw DNA from every testing company, so it can find relatives who tested elsewhere. OneFamily never uploads: you do it on GEDmatch’s own site, and record the result here.</p>
       <h2>Your family kits</h2>
       <table className="ol-table">
         <thead><tr><th scope="col">Kit</th><th scope="col">On GEDmatch</th><th scope="col">Setting</th><th scope="col">Notes</th></tr></thead>

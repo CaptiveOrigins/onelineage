@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { fileURLToPath } from 'node:url'
-import { BlindGate, IdentityRegistry, newPersonId, proposeLinks, type MatchObservation } from '@captiveorigins/onelineage-core'
+import { BlindGate, IdentityRegistry, newPersonId, proposeLinks, type MatchObservation } from '@extantape/onefamily-core'
 import { loadTermsRegister } from '../../core/src/node.js'
-import { exportKit, Rng, standardFamily } from '@captiveorigins/onelineage-simulate'
+import { exportKit, Rng, standardFamily } from '@extantape/onefamily-simulate'
 import { importGenealogyAssistant } from '../src/index.js'
 
 const terms = loadTermsRegister(fileURLToPath(new URL('../../../terms', import.meta.url)))

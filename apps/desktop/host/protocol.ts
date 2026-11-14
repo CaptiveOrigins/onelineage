@@ -2,8 +2,8 @@
  * What the window and the Node host say to each other. The window imports these as types only, so no
  * Node code reaches the web view.
  */
-import type { MatchSide } from '@captiveorigins/onelineage-core'
-import type { PedigreeDocument } from '@captiveorigins/onepedigree-core'
+import type { MatchSide } from '@extantape/onefamily-core'
+import type { PedigreeDocument } from '@extantape/onepedigree-core'
 import type { ExtensionStatus } from './extension/bridge'
 import type { LabelInstruction } from './extension/wire'
 
@@ -101,7 +101,7 @@ export type TheoryResult =
       recorded: PedigreeDocument
       /** The person the planted question is about, and the two candidate fathers. */
       question: { child: string; recordedFather: string; biologicalFather: string }
-      /** The recorded tree plus the candidate fathers, in OnePedigree's uncertainParents shape (OneLineage will use it from 0.1.0-alpha.21). */
+      /** The recorded tree plus the candidate fathers, in OnePedigree's uncertainParents shape (OneFamily will use it from 0.1.0-alpha.21). */
       theory: TheoryDocument
     }
 

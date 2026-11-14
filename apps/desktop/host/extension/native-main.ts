@@ -7,6 +7,6 @@ runRelay({
   argv: process.argv.slice(2),
   stdin: process.stdin,
   write: (b) => process.stdout.write(b),
-  socketPath: socketPath(process.env['ONELINEAGE_STATE_DIR'] || defaultStateDir()),
+  socketPath: socketPath(process.env['ONEFAMILY_STATE_DIR'] || defaultStateDir()),
   exit: (code) => process.exit(code),
 })

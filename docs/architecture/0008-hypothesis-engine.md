@@ -4,7 +4,7 @@ Status: accepted, 2026-11-10
 
 ## Context
 
-People ask questions like "who is this person's biological father?". There are several candidates, and the evidence is the amount of DNA shared with many matches. OneLineage reports odds, never a single answer (principle 4).
+People ask questions like "who is this person's biological father?". There are several candidates, and the evidence is the amount of DNA shared with many matches. OneFamily reports odds, never a single answer (principle 4).
 
 ## Decision
 

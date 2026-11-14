@@ -1,15 +1,15 @@
 /**
- * The cache: a SQLite database kept outside the library (by default in ~/Library/Application Support/OneLineage),
+ * The cache: a SQLite database kept outside the library (by default in ~/Library/Application Support/OneFamily),
  * holding what the importers read from the library, ready to query. It's disposable. Rebuilding it from the
  * library must give the same contents (S11), which `cacheDigest` checks.
  */
 import { DatabaseSync } from 'node:sqlite'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
-import { sha256Hex, type MatchObservation, type SharedMatchLink } from '@captiveorigins/onelineage-core'
+import { sha256Hex, type MatchObservation, type SharedMatchLink } from '@extantape/onefamily-core'
 import type { Decision } from './decisions.js'
 
-export const defaultCacheDir = () => join(homedir(), 'Library', 'Application Support', 'OneLineage')
+export const defaultCacheDir = () => join(homedir(), 'Library', 'Application Support', 'OneFamily')
 
 export type CacheInput = { observations: readonly MatchObservation[]; links: readonly SharedMatchLink[]; decisions: readonly Decision[] }
 

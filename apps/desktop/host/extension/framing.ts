@@ -1,6 +1,6 @@
 /**
  * Chrome native messaging framing: each message is UTF-8 JSON preceded by its length as a 32-bit unsigned
- * integer in native byte order (little-endian on every Mac OneLineage runs on). Chrome refuses messages
+ * integer in native byte order (little-endian on every Mac OneFamily runs on). Chrome refuses messages
  * from the host over 1 MB, and sends at most 64 MiB to it.
  */
 

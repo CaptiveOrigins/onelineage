@@ -5,7 +5,7 @@
  * line shows up (the same idea as the ops ledger).
  */
 import { appendFileSync, existsSync, readFileSync } from 'node:fs'
-import { sha256Hex } from '@captiveorigins/onelineage-core'
+import { sha256Hex } from '@extantape/onefamily-core'
 
 export type DecisionKind = 'unblind' | 'identity-link' | 'theory-status' | 'label-batch' | 'backup-bypass' | 'use-declaration' | (string & {})
 export type Decision = { seq: number; at: string; by: string; kind: DecisionKind; data: Record<string, unknown>; prev: string; hash: string }

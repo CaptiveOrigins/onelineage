@@ -4,7 +4,7 @@
  */
 import { isLoopbackOrigin, type PageSnapshot, type StopReason } from './wire'
 
-export const EXPORT_ELEMENT_ID = 'onelineage-export'
+export const EXPORT_ELEMENT_ID = 'onefamily-export'
 
 /**
  * Runs inside the page through chrome.scripting.executeScript. It must stay self-contained (Chrome sends
@@ -14,7 +14,7 @@ export function readPageInPage(): PageSnapshot {
   return {
     url: location.href,
     kind: document.body?.dataset['pageKind'] ?? null,
-    exportText: document.getElementById('onelineage-export')?.textContent ?? null,
+    exportText: document.getElementById('onefamily-export')?.textContent ?? null,
   }
 }
 

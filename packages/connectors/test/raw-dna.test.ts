@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { fileURLToPath } from 'node:url'
-import { CapabilityRefused, ImportRefused, registerFromFiles } from '@captiveorigins/onelineage-core'
+import { CapabilityRefused, ImportRefused, registerFromFiles } from '@extantape/onefamily-core'
 import { loadTermsRegister } from '../../core/src/node.js'
-import { AlleleBook, genotypesOf, makePanel, RAW_FORMATS, standardFamily, writeRaw } from '@captiveorigins/onelineage-simulate'
+import { AlleleBook, genotypesOf, makePanel, RAW_FORMATS, standardFamily, writeRaw } from '@extantape/onefamily-simulate'
 import { detectRawService, importRawDna } from '../src/index.js'
 
 const terms = loadTermsRegister(fileURLToPath(new URL('../../../terms', import.meta.url)))

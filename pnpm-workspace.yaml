@@ -3,3 +3,6 @@ packages:
   - apps/*
 allowBuilds:
   esbuild: true
+minimumReleaseAgeExclude:
+  - '@extantape/onepedigree-core@0.1.0-alpha.22'
+  - '@extantape/onepedigree-react@0.1.0-alpha.22'

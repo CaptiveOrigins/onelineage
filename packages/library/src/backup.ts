@@ -5,7 +5,7 @@
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { sha256Hex } from '@captiveorigins/onelineage-core'
+import { sha256Hex } from '@extantape/onefamily-core'
 import { listFiles } from './layout.js'
 
 const MAGIC = new TextEncoder().encode('OLENC1')
@@ -27,7 +27,7 @@ export async function encrypt(bytes: Uint8Array, raw: Uint8Array): Promise<Uint8
   return out
 }
 export async function decrypt(blob: Uint8Array, raw: Uint8Array): Promise<Uint8Array> {
-  if (!MAGIC.every((b, i) => blob[i] === b)) throw new Error('not an encrypted OneLineage backup file')
+  if (!MAGIC.every((b, i) => blob[i] === b)) throw new Error('not an encrypted OneFamily backup file')
   const iv = blob.slice(MAGIC.length, MAGIC.length + 12)
   return new Uint8Array(await globalThis.crypto.subtle.decrypt({ name: 'AES-GCM', iv }, await key(raw), blob.slice(MAGIC.length + 12) as Uint8Array<ArrayBuffer>))
 }
@@ -42,7 +42,7 @@ export async function backupTo(library: string, destination: string, opts: { now
   const cloud = isCloudSynced(destination)
   if (cloud && !opts.encryptWith) throw new Error(`${destination} is synced to a cloud service; backups there must be encrypted`)
   const stamp = (opts.now ?? new Date()).toISOString().replace(/[:.]/g, '-')
-  const folder = join(destination, `OneLineage backup ${stamp}`)
+  const folder = join(destination, `OneFamily backup ${stamp}`)
   if (existsSync(folder)) throw new Error(`${folder} already exists`)
   const lines: string[] = []
   for (const rel of listFiles(library)) {
@@ -95,7 +95,7 @@ export async function restoreBackup(folder: string, into: string, encryptWith?: 
 
 /** Keep the newest `keep` backups at a destination; older ones are removed only after the newest one has been checked. */
 export async function prune(destination: string, keep: number, encryptWith?: Uint8Array): Promise<string[]> {
-  const all = readdirSync(destination).filter((n) => n.startsWith('OneLineage backup ')).sort()
+  const all = readdirSync(destination).filter((n) => n.startsWith('OneFamily backup ')).sort()
   const newest = all[all.length - 1]
   if (!newest || (await checkBackup(join(destination, newest), encryptWith)).length) return []
   const remove = all.slice(0, Math.max(0, all.length - keep))

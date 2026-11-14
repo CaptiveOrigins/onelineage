@@ -1,8 +1,8 @@
 {
-  "name": "@captiveorigins/onelineage-core",
+  "name": "@extantape/onefamily-core",
   "version": "0.0.0",
   "private": true,
-  "description": "OneLineage core: the data model, provenance, the blind-first gate and the terms register, with no app, network or database dependency.",
+  "description": "OneFamily core: the data model, provenance, the blind-first gate and the terms register, with no app, network or database dependency.",
   "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "sideEffects": false,

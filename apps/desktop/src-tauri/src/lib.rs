@@ -1,5 +1,5 @@
-//! OneLineage for Mac: the window, the folder picker, and one bridge, `host_call`, to the app's Node host
-//! (`host/main.ts`, bundled as `host.mjs`). The host runs the OneLineage packages unchanged and does all the
+//! OneFamily for Mac: the window, the folder picker, and one bridge, `host_call`, to the app's Node host
+//! (`host/main.ts`, bundled as `host.mjs`). The host runs the OneFamily packages unchanged and does all the
 //! file work. It's started on the first request and stopped when the app quits. See ADR 0007.
 //!
 //! Only two programs can run from here, both fixed on this side: Node, and the bundled host script.
@@ -30,9 +30,9 @@ impl Drop for Sidecar {
 #[derive(Default, Clone)]
 struct Host(Arc<Mutex<Option<Sidecar>>>);
 
-/// Node, from ONELINEAGE_NODE, the usual install places, or PATH. Node 22 or later is needed.
+/// Node, from ONEFAMILY_NODE, the usual install places, or PATH. Node 22 or later is needed.
 fn find_node() -> Option<PathBuf> {
-    if let Ok(p) = std::env::var("ONELINEAGE_NODE") {
+    if let Ok(p) = std::env::var("ONEFAMILY_NODE") {
         let p = PathBuf::from(p);
         if p.is_file() {
             return Some(p);
@@ -60,12 +60,12 @@ fn host_script(app: &tauri::AppHandle) -> Option<PathBuf> {
 }
 
 fn start(app: &tauri::AppHandle) -> Result<Sidecar, String> {
-    let node = find_node().ok_or("OneLineage needs Node.js 22 or later on this Mac for now, and couldn’t find it. Install Node, or set ONELINEAGE_NODE to its path.")?;
+    let node = find_node().ok_or("OneFamily needs Node.js 22 or later on this Mac for now, and couldn’t find it. Install Node, or set ONEFAMILY_NODE to its path.")?;
     let script = host_script(app).ok_or("The app’s file helper (host.mjs) is missing. Run `pnpm build:host` in apps/desktop.")?;
-    let state_dir = app.path().home_dir().map_err(|e| e.to_string())?.join("Library").join("Application Support").join("OneLineage");
+    let state_dir = app.path().home_dir().map_err(|e| e.to_string())?.join("Library").join("Application Support").join("OneFamily");
     let mut child = Command::new(node)
         .arg(script)
-        .env("ONELINEAGE_STATE_DIR", state_dir)
+        .env("ONEFAMILY_STATE_DIR", state_dir)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::inherit())
@@ -103,7 +103,7 @@ async fn host_call(app: tauri::AppHandle, host: State<'_, Host>, method: String,
     }
     let host = host.inner().clone();
     tauri::async_runtime::spawn_blocking(move || {
-        let mut guard = host.0.lock().map_err(|_| "The app’s file helper is in a bad state. Restart OneLineage.".to_string())?;
+        let mut guard = host.0.lock().map_err(|_| "The app’s file helper is in a bad state. Restart OneFamily.".to_string())?;
         if guard.is_none() {
             *guard = Some(start(&app)?);
         }
@@ -142,7 +142,7 @@ pub fn run() {
             }
         })
         .build(tauri::generate_context!())
-        .expect("error while starting OneLineage")
+        .expect("error while starting OneFamily")
         .run(|app, event| {
             if let tauri::RunEvent::Exit = event {
                 // Stop the host with the app.

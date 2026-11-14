@@ -39,5 +39,5 @@ export function dueMessage(items: readonly DueItem[]): string | null {
   const checks = items.filter((i) => i.kind === 'check').length
   const reruns = items.filter((i) => i.kind === 'rerun').length
   const parts = [checks ? `${checks} kit${checks === 1 ? '' : 's'} due for a match-list check` : '', reruns ? `${reruns} due for a yearly rerun` : ''].filter(Boolean)
-  return `OneLineage: ${parts.join(' and ')}. Open the app to see which.`
+  return `OneFamily: ${parts.join(' and ')}. Open the app to see which.`
 }

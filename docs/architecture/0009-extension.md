@@ -4,7 +4,7 @@ Status: accepted for v0, 2026-11-10
 
 ## Context
 
-OneLineage for Mac needs a way to collect matches from the sites people use. The owner decided on 2026-11-10 that a Chrome extension does the collecting for the app, and set its limits (see `docs/decisions.md`). The terms register (ADR 0004) says no DNA service allows automated page visits, so this version is built and tested only against a made-up site on 127.0.0.1.
+OneFamily for Mac needs a way to collect matches from the sites people use. The owner decided on 2026-11-10 that a Chrome extension does the collecting for the app, and set its limits (see `docs/decisions.md`). The terms register (ADR 0004) says no DNA service allows automated page visits, so this version is built and tested only against a made-up site on 127.0.0.1.
 
 ## Decision
 
@@ -17,7 +17,7 @@ extension ──Chrome native messaging──▶ native host (native-host.mjs) �
 ```
 
 - The extension opens one native messaging port (`chrome.runtime.connectNative`). Chrome starts the native host and passes it the caller's origin.
-- The native host is a relay. It checks the origin has the shape of an extension origin, then passes messages to the running app over a Unix socket at `~/Library/Application Support/OneLineage/extension.sock`. The socket is readable by this user only. There's no network port, localhost included.
+- The native host is a relay. It checks the origin has the shape of an extension origin, then passes messages to the running app over a Unix socket at `~/Library/Application Support/OneFamily/extension.sock`. The socket is readable by this user only. There's no network port, localhost included.
 - The app's host (`bridge.ts`) owns every rule. If the app isn't open, the relay says so and exits.
 - Messages to and from Chrome use Chrome's framing: a 32-bit little-endian length, then UTF-8 JSON (`framing.ts`). Messages to Chrome are capped at 1 MB.
 - The wire protocol is one file, `apps/desktop/host/extension/wire.ts`, and both sides import it.
@@ -68,11 +68,11 @@ The extension's toolbar button sends `privacyButton`. The app flips its own priv
 
 ### Installing the native host
 
-`node apps/desktop/host-dist/install-native-host.mjs --extension-id <id>` writes two files, and only when the person runs it. The first is a launcher in `~/Library/Application Support/OneLineage/native-host/`. The second is Chrome's manifest in `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/org.captiveorigins.onelineage.json`. `--dry-run` prints them without writing anything. The committed template is `apps/desktop/native-host/org.captiveorigins.onelineage.json.template`, and a test keeps it in step with the code.
+`node apps/desktop/host-dist/install-native-host.mjs --extension-id <id>` writes two files, and only when the person runs it. The first is a launcher in `~/Library/Application Support/OneFamily/native-host/`. The second is Chrome's manifest in `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.extantape.onefamily.json`. `--dry-run` prints them without writing anything. The committed template is `apps/desktop/native-host/com.extantape.onefamily.json.template`, and a test keeps it in step with the code.
 
 ## What's mocked or not done
 
-- **No real site, ever, in this version.** Only the mock site (`apps/extension/mock-site`) was used, with made-up people from `@captiveorigins/onelineage-simulate` (seed 1, the same family as the app's demo).
+- **No real site, ever, in this version.** Only the mock site (`apps/extension/mock-site`) was used, with made-up people from `@extantape/onefamily-simulate` (seed 1, the same family as the app's demo).
 - **Not tried in Chrome.** The extension builds, but it hasn't been loaded into a browser. The Chrome glue in `background.ts` (tabs, scripting, the side panel, the badge) has no automated test. The logic behind it (`core.ts`, `run-loop.ts`, `page.ts`) is tested in Node, with `fetch` standing in for a browser tab.
 - **The native host wasn't installed.** The relay, the socket and the framing are tested end to end in Node, with a fake stdin standing in for Chrome.
 - **Collected pages stay in memory** in the app's host for the session. Writing them into the library as frozen exports comes later.

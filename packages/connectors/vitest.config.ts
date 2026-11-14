@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url'
 export default defineConfig({
   resolve: {
     alias: {
-      '@captiveorigins/onelineage-core': fileURLToPath(new URL('../core/src/index.ts', import.meta.url)),
-      '@captiveorigins/onelineage-simulate': fileURLToPath(new URL('../simulate/src/index.ts', import.meta.url)),
+      '@extantape/onefamily-core': fileURLToPath(new URL('../core/src/index.ts', import.meta.url)),
+      '@extantape/onefamily-simulate': fileURLToPath(new URL('../simulate/src/index.ts', import.meta.url)),
     },
   },
 })

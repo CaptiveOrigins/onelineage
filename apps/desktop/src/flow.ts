@@ -55,7 +55,7 @@ export function nextStepDown(bypass: 0 | 1 | 2): { to: 1 | 2; button: string; lo
     return {
       to: 2,
       button: 'Use no backups',
-      loses: 'With no backups, everything you decide and approve in OneLineage is lost if this Mac is lost or its disk fails. Raw exports can be downloaded again; your decisions can’t.',
+      loses: 'With no backups, everything you decide and approve in OneFamily is lost if this Mac is lost or its disk fails. Raw exports can be downloaded again; your decisions can’t.',
       confirm: 'Yes, use no backups',
     }
   return null

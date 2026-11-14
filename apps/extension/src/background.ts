@@ -22,7 +22,7 @@ const core = createCore({
   setBadge: (on) => {
     void chrome.action.setBadgeText({ text: on ? 'P' : '' })
     void chrome.action.setBadgeBackgroundColor({ color: '#5b4a3f' })
-    void chrome.action.setTitle({ title: on ? 'OneLineage: privacy is on. Click to turn it off in the app.' : 'OneLineage: privacy is off. Click to turn it on in the app.' })
+    void chrome.action.setTitle({ title: on ? 'OneFamily: privacy is on. Click to turn it off in the app.' : 'OneFamily: privacy is off. Click to turn it on in the app.' })
   },
   now: () => Date.now(),
   sleep: (ms) => new Promise((r) => setTimeout(r, ms)),
@@ -37,7 +37,7 @@ function connect() {
   native.onDisconnect.addListener(() => {
     const why = chrome.runtime.lastError?.message ?? null
     native = null
-    core.disconnected(why && /not found/i.test(why) ? 'The OneLineage native host isn’t installed. See the app’s Extension screen.' : 'Not connected to OneLineage. Open the app, then press Connect.')
+    core.disconnected(why && /not found/i.test(why) ? 'The OneFamily native host isn’t installed. See the app’s Extension screen.' : 'Not connected to OneFamily. Open the app, then press Connect.')
   })
   core.connected()
 }

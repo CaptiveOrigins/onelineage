@@ -11,7 +11,7 @@
  *   must also be on 127.0.0.1, the local mock site. No real site is ever visited.
  * - What's handed over is the minimum, and each hand-over is logged.
  */
-import { CapabilityRefused, type Capability, type TermsRegister } from '@captiveorigins/onelineage-core'
+import { CapabilityRefused, type Capability, type TermsRegister } from '@extantape/onefamily-core'
 import {
   DAILY_PAGE_CAP, EXTENSION_REQUESTS, PUBLISHED_EXTENSION_ID, REQUEST_TIMEOUT_MS, SESSION_GRANT_MS, STOP_REASONS, WIRE_VERSION,
   extensionIdFromOrigin, isLoopbackOrigin,
@@ -141,7 +141,7 @@ export function createExtensionBridge(opts: BridgeOptions) {
     const late = waiting.filter((w) => Date.parse(w.expiresAt) <= t)
     if (late.length) {
       waiting = waiting.filter((w) => !late.includes(w))
-      for (const w of late) send({ type: 'response', id: w.id, ok: false, error: 'Nobody answered in OneLineage in time, so the answer is no.' })
+      for (const w of late) send({ type: 'response', id: w.id, ok: false, error: 'Nobody answered in OneFamily in time, so the answer is no.' })
     }
     if (ended.length || late.length) changed()
   }
@@ -332,7 +332,7 @@ export function createExtensionBridge(opts: BridgeOptions) {
   }
 
   function requireConnected() {
-    if (!conn) throw new ExtensionRefused('The OneLineage extension isn’t connected. Open Chrome with the extension turned on.')
+    if (!conn) throw new ExtensionRefused('The OneFamily extension isn’t connected. Open Chrome with the extension turned on.')
   }
 
   return {
@@ -342,7 +342,7 @@ export function createExtensionBridge(opts: BridgeOptions) {
      */
     connect(origin: string, sendFn: (m: AppMessage) => void) {
       const id = extensionIdFromOrigin(origin)
-      if (!id || !allowedIds().includes(id)) throw new ExtensionRefused('That caller isn’t the OneLineage extension this app trusts, so it was refused.')
+      if (!id || !allowedIds().includes(id)) throw new ExtensionRefused('That caller isn’t the OneFamily extension this app trusts, so it was refused.')
       if (conn) close()
       conn = { send: sendFn, extensionId: id }
       changed()
@@ -372,7 +372,7 @@ export function createExtensionBridge(opts: BridgeOptions) {
       waiting = waiting.filter((x) => x !== w)
       changed()
       if (answer === 'deny') {
-        send({ type: 'response', id: w.id, ok: false, error: 'Denied in OneLineage.' })
+        send({ type: 'response', id: w.id, ok: false, error: 'Denied in OneFamily.' })
         return
       }
       if (answer !== 'once' && answer !== 'session') throw new ExtensionRefused('Answer allow once, allow for this session, or deny.')
@@ -385,7 +385,7 @@ export function createExtensionBridge(opts: BridgeOptions) {
       if (!g) return
       grants = grants.filter((x) => x !== g)
       send({ type: 'grantEnded', grantId })
-      if (g.kind === 'run') stopRunWith('stopped-in-app', 'Ended in OneLineage.')
+      if (g.kind === 'run') stopRunWith('stopped-in-app', 'Ended in OneFamily.')
       changed()
     },
 
@@ -410,7 +410,7 @@ export function createExtensionBridge(opts: BridgeOptions) {
     stopRun() {
       if (!run || run.state !== 'running') return
       send({ type: 'command', command: 'stopRun', runId: run.runId })
-      stopRunWith('stopped-in-app', 'Stopped in OneLineage.')
+      stopRunWith('stopped-in-app', 'Stopped in OneFamily.')
     },
 
     /** Started in the app, for a batch the owner approved. One label per page, at human pace. */

@@ -1,13 +1,13 @@
 [package]
-name = "onelineage"
+name = "onefamily"
 version = "0.0.0"
-description = "OneLineage for Mac"
+description = "OneFamily for Mac"
 authors = ["Captive Origins"]
 license-file = "../../../LICENSE"
 edition = "2021"
 
 [lib]
-name = "onelineage_lib"
+name = "onefamily_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

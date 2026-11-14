@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { fileURLToPath } from 'node:url'
-import { assignSides, compareKits, paint } from '@captiveorigins/onelineage-core'
+import { assignSides, compareKits, paint } from '@extantape/onefamily-core'
 import { loadTermsRegister } from '../../core/src/node.js'
-import { AlleleBook, genotypesOf, makePanel, shared, standardFamily, writeRaw, type Person } from '@captiveorigins/onelineage-simulate'
+import { AlleleBook, genotypesOf, makePanel, shared, standardFamily, writeRaw, type Person } from '@extantape/onefamily-simulate'
 import { importRawDna } from '../src/index.js'
 
 const terms = loadTermsRegister(fileURLToPath(new URL('../../../terms', import.meta.url)))

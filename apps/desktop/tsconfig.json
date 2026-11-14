@@ -7,11 +7,11 @@
     "declaration": false,
     "types": ["node", "vite/client"],
     "paths": {
-      "@captiveorigins/onelineage-core": ["../../packages/core/src/index.ts"],
-      "@captiveorigins/onelineage-connectors": ["../../packages/connectors/src/index.ts"],
-      "@captiveorigins/onelineage-library": ["../../packages/library/src/index.ts"],
-      "@captiveorigins/onelineage-simulate": ["../../packages/simulate/src/index.ts"],
-      "@captiveorigins/onelineage-analysis": ["../../packages/analysis/src/index.ts"]
+      "@extantape/onefamily-core": ["../../packages/core/src/index.ts"],
+      "@extantape/onefamily-connectors": ["../../packages/connectors/src/index.ts"],
+      "@extantape/onefamily-library": ["../../packages/library/src/index.ts"],
+      "@extantape/onefamily-simulate": ["../../packages/simulate/src/index.ts"],
+      "@extantape/onefamily-analysis": ["../../packages/analysis/src/index.ts"]
     }
   },
   "include": ["src", "host", "test", "vite.config.ts", "vitest.config.ts", "tsup.host.config.ts", "aliases.ts"]

@@ -1,8 +1,8 @@
 {
-  "name": "@captiveorigins/onelineage-analysis",
+  "name": "@extantape/onefamily-analysis",
   "version": "0.0.0",
   "private": true,
-  "description": "OneLineage analysis: groups DNA matches from the DNA alone, with a seeded Leiden implementation, consensus clustering, two-way side splits and cautious seeded placement. Same inputs and seeds, same answer.",
+  "description": "OneFamily analysis: groups DNA matches from the DNA alone, with a seeded Leiden implementation, consensus clustering, two-way side splits and cautious seeded placement. Same inputs and seeds, same answer.",
   "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "sideEffects": false,
@@ -16,10 +16,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@captiveorigins/onelineage-core": "workspace:*"
+    "@extantape/onefamily-core": "workspace:*"
   },
   "devDependencies": {
-    "@captiveorigins/onelineage-connectors": "workspace:*",
-    "@captiveorigins/onelineage-simulate": "workspace:*"
+    "@extantape/onefamily-connectors": "workspace:*",
+    "@extantape/onefamily-simulate": "workspace:*"
   }
 }

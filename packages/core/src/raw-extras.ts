@@ -1,5 +1,5 @@
 /**
- * Raw-file extras (OneLineage plan section 5i):
+ * Raw-file extras (OneFamily plan section 5i):
  * - `phaseWithParent`: split a child's raw kit into the half from one tested parent and the half from the
  *   other parent. Each half-kit makes a match's side certain.
  * - `rebuildFromDescendants`: partly rebuild a relative who never tested from children and the other parent.

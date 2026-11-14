@@ -1,5 +1,5 @@
-import { layoutSync, normalizePedigree, projectPedigree } from '@captiveorigins/onepedigree-core'
-import { PedigreeExplorer } from '@captiveorigins/onepedigree-react'
+import { layoutSync, normalizePedigree, projectPedigree } from '@extantape/onepedigree-core'
+import { PedigreeExplorer } from '@extantape/onepedigree-react'
 import { EyeOff } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { TheoryResult } from '../../host/protocol'
@@ -20,7 +20,7 @@ export function TheoryScreen({ theory, onTheory, dark }: { theory: TheoryResult 
           <Icon of={EyeOff} /> {show(theory.name)}’s kit is blind
         </h2>
         <p>
-          OneLineage keeps family trees sealed until you choose to look, so your matches are grouped from the DNA before a tree can nudge them. While a kit is
+          OneFamily keeps family trees sealed until you choose to look, so your matches are grouped from the DNA before a tree can nudge them. While a kit is
           blind, nothing reads its trees, notes or ancestor hints.
         </p>
         <p>Unblinding is recorded in your library’s decisions log, with the time. It can’t be taken back: the log keeps what you saw.</p>

@@ -3,10 +3,10 @@
  * real importer, plus the truth about how each match is related to the kit.
  */
 import { fileURLToPath } from 'node:url'
-import { BlindGate } from '@captiveorigins/onelineage-core'
+import { BlindGate } from '@extantape/onefamily-core'
 import { loadTermsRegister } from '../../core/src/node.js'
-import { importGenealogyAssistant, type ImportResult } from '@captiveorigins/onelineage-connectors'
-import { exportKit, standardFamily, type Family, type Person } from '@captiveorigins/onelineage-simulate'
+import { importGenealogyAssistant, type ImportResult } from '@extantape/onefamily-connectors'
+import { exportKit, standardFamily, type Family, type Person } from '@extantape/onefamily-simulate'
 
 const terms = loadTermsRegister(fileURLToPath(new URL('../../../terms', import.meta.url)))
 const enc = new TextEncoder()

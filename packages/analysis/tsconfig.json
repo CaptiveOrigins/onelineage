@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@captiveorigins/onelineage-core": ["../core/src/index.ts"],
-      "@captiveorigins/onelineage-connectors": ["../connectors/src/index.ts"],
-      "@captiveorigins/onelineage-simulate": ["../simulate/src/index.ts"]
+      "@extantape/onefamily-core": ["../core/src/index.ts"],
+      "@extantape/onefamily-connectors": ["../connectors/src/index.ts"],
+      "@extantape/onefamily-simulate": ["../simulate/src/index.ts"]
     }
   },
   "include": ["src", "test"]

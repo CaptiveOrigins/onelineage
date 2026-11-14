@@ -10,17 +10,17 @@ const port = chrome.runtime.connect({ name: 'panel' })
 
 const REASONS: Record<StopReason, string> = {
   finished: 'Finished.',
-  'stopped-in-app': 'Stopped in OneLineage.',
+  'stopped-in-app': 'Stopped in OneFamily.',
   challenge: 'Stopped: the site showed a challenge.',
   'sign-in': 'Stopped: the site asked to sign in.',
   error: 'Stopped: something went wrong.',
   'daily-cap': 'Stopped: today’s page cap was reached.',
   'grant-ended': 'Stopped: the run’s time was up.',
-  disconnected: 'Stopped: OneLineage closed the connection.',
+  disconnected: 'Stopped: OneFamily closed the connection.',
 }
 
 function render(s: PanelState) {
-  $('connection').textContent = s.connected ? 'Connected to OneLineage.' : (s.connection ?? 'Not connected.')
+  $('connection').textContent = s.connected ? 'Connected to OneFamily.' : (s.connection ?? 'Not connected.')
   $<HTMLButtonElement>('connect').hidden = s.connected
   $('privacy').hidden = !s.privacy
   for (const id of ['summarise', 'hand-over', 'new-matches']) $<HTMLButtonElement>(id).disabled = !s.connected || s.waiting

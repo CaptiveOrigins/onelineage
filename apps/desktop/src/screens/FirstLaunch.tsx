@@ -20,7 +20,7 @@ export function FirstLaunch(props: { step: Exclude<FirstLaunchStep, 'ready'>; st
   useEffect(() => heading.current?.focus(), [props.step])
   return (
     <main className="ol-welcome">
-      <ol className="ol-steps" aria-label="Setting up OneLineage">
+      <ol className="ol-steps" aria-label="Setting up OneFamily">
         {FIRST_LAUNCH_STEPS.map((s) => (
           <li key={s} aria-current={s === props.step ? 'step' : undefined}>
             {FIRST_LAUNCH_STEPS.indexOf(s) + 1}. {STEP_NAMES[s]}
@@ -36,7 +36,7 @@ export function FirstLaunch(props: { step: Exclude<FirstLaunchStep, 'ready'>; st
             Where should backups go? <span className="ol-hint">{stepLabel('backups')}</span>
           </h1>
           <p>
-            Your library holds everything you decide in OneLineage. By default it needs two backups, each in its own place, such as an external disk and a
+            Your library holds everything you decide in OneFamily. By default it needs two backups, each in its own place, such as an external disk and a
             second disk. Each copy is checked by restoring it. You can choose fewer, one step at a time, and each step is recorded.
           </p>
           <BackupSetup backups={props.backups} onBackups={props.onBackups} setup />
@@ -55,10 +55,10 @@ function LibraryStep({ heading, onStatus }: { heading: React.RefObject<HTMLHeadi
         Choose a folder for your library <span className="ol-hint">{stepLabel('library')}</span>
       </h1>
       <p>
-        OneLineage groups your DNA matches before your family tree can bias them. It runs on this Mac, with no servers and no account. Everything it keeps is
+        OneFamily groups your DNA matches before your family tree can bias them. It runs on this Mac, with no servers and no account. Everything it keeps is
         in one folder you choose, as plain files you can open without the app.
       </p>
-      <p className="ol-hint">Choose an empty folder, or one that’s already a OneLineage library. A folder synced by iCloud or Dropbox is fine.</p>
+      <p className="ol-hint">Choose an empty folder, or one that’s already a OneFamily library. A folder synced by iCloud or Dropbox is fine.</p>
       <ErrorBox error={error} onDismiss={() => setError(null)} />
       <FolderField
         label="Library folder"
@@ -104,7 +104,7 @@ function UseStep({ heading, onStatus }: { heading: React.RefObject<HTMLHeadingEl
         Which kind of use is this? <span className="ol-hint">{stepLabel('use')}</span>
       </h1>
       <p>
-        OneLineage is for people researching families. This is asked once, and your answer is kept in your library’s decisions log. The app doesn’t watch how
+        OneFamily is for people researching families. This is asked once, and your answer is kept in your library’s decisions log. The app doesn’t watch how
         it’s used.
       </p>
       <fieldset className="ol-choices">

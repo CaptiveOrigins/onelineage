@@ -1,7 +1,7 @@
 {
-  "about": "Copy of https://github.com/CaptiveOrigins/onephylogeny docs/oneorigin at the commit below. Written by `node scripts/oneorigin.mjs lock`; `check` fails on any file that differs.",
+  "about": "Copy of https://github.com/ExtantApe/OnePhylogeny docs/oneorigin at the commit below. Written by `node scripts/oneorigin.mjs lock`; `check` fails on any file that differs.",
   "source": {
-    "repo": "https://github.com/CaptiveOrigins/onephylogeny",
+    "repo": "https://github.com/ExtantApe/OnePhylogeny",
     "branch": "main",
     "path": "docs/oneorigin",
     "commit": "35c7993d6915fb8c0622035a50f88b3e1970f4eb"

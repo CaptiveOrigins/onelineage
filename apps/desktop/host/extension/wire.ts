@@ -1,5 +1,5 @@
 /**
- * What the OneLineage Chrome extension and the app say to each other (ADR 0009). The app owns this list and
+ * What the OneFamily Chrome extension and the app say to each other (ADR 0009). The app owns this list and
  * enforces it; the extension imports the same file. Pure TypeScript with no Node or browser APIs, so both
  * sides can use it.
  *
@@ -9,7 +9,7 @@
 export const WIRE_VERSION = 1
 
 /** The native messaging host's name, as Chrome looks it up in NativeMessagingHosts/. */
-export const NATIVE_HOST_NAME = 'org.captiveorigins.onelineage'
+export const NATIVE_HOST_NAME = 'com.extantape.onefamily'
 
 /**
  * The extension's ID once it's listed on the Chrome Web Store. Null until the owner publishes the listing,

@@ -12,7 +12,7 @@
 import {
   type BlindGate, type Issue, ImportRefused, type MatchObservation, type MatchSide, type SealedFile, type SharedMatchLink,
   SYNTHETIC_SOURCES, sha256Hex, type TermsRegister,
-} from '@captiveorigins/onelineage-core'
+} from '@extantape/onefamily-core'
 import { parseCsv } from './csv.js'
 
 export const MATCH_LIST_REQUIRED = [

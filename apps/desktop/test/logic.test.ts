@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { normalizePedigree, projectPedigree, validatePedigree } from '@captiveorigins/onepedigree-core'
+import { normalizePedigree, projectPedigree, validatePedigree } from '@extantape/onepedigree-core'
 import type { BackupState, MatchRow, Status } from '../host/protocol'
 import { firstLaunchStep, flowInputs, nextStepDown, stepLabel } from '../src/flow'
 import { cmInput, DEFAULT_SORT, filterMatches, nextSort, NO_FILTER, sortMatches } from '../src/matches'

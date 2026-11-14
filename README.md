@@ -1,6 +1,6 @@
-# OneLineage
+# OneFamily
 
-DNA-first genetic genealogy for Mac. OneLineage groups your DNA matches before your family tree can bias them, then gives odds on each possible family tree. It runs on your own Mac, with no servers and no account.
+DNA-first genetic genealogy for Mac. OneFamily groups your DNA matches before your family tree can bias them, then gives odds on each possible family tree. It runs on your own Mac, with no servers and no account.
 
 **Status:** early, and only tested on made-up families; nothing reads real data yet. Built so far:
 
@@ -14,7 +14,7 @@ DNA-first genetic genealogy for Mac. OneLineage groups your DNA matches before y
 - the hypothesis engine with odds (ADR 0008)
 - the library with checked, encrypted backups
 - one universal ID per person, and proposed cross-service links
-- OneLineage for Mac, v0: runs on a made-up demo family. It's been built and opened locally, not released, and needs Node 22.13 or later on the Mac for now (ADR 0007).
+- OneFamily for Mac, v0: runs on a made-up demo family. It's been built and opened locally, not released, and needs Node 22.13 or later on the Mac for now (ADR 0007).
 - the Chrome extension the app collects with (`apps/extension`, ADR 0009). It stores nothing, talks to the app only through Chrome's native messaging, and asks for your OK in the app. It only works with a local mock site: every DNA service's terms say no to automated page visits. It's been tested with Vitest against the mock site, and hasn't been loaded into Chrome yet.
 
 253 tests pass locally. The raw layouts haven't been checked against a real downloaded file. The register's verdicts are a careful reading of public pages, not legal advice, and a legal review is still to come.
@@ -27,7 +27,7 @@ DNA-first genetic genealogy for Mac. OneLineage groups your DNA matches before y
 - Build possible family trees with odds, and track your working theories against the evidence.
 - Keep everything as plain files in a folder you choose, with backups to two places by default.
 
-It's part of the [OneOrigin](https://github.com/CaptiveOrigins/onephylogeny/blob/main/docs/oneorigin/README.md) family. Family trees are drawn with OnePedigree's views.
+It's part of the [OneOrigin](https://github.com/ExtantApe/OnePhylogeny/blob/main/docs/oneorigin/README.md) family. Family trees are drawn with OnePedigree's views.
 
 ## Who may use it
 
@@ -46,24 +46,24 @@ A pnpm workspace: Node 22 or later, TypeScript, Vitest.
 
 ```bash
 # The Mac app in development (needs Rust; Node 22.13 or later must be on this Mac while the app runs)
-pnpm --filter onelineage-desktop app:dev
+pnpm --filter onefamily-desktop app:dev
 
 # The same screens in a browser, without the Mac shell
-pnpm --filter onelineage-desktop dev
+pnpm --filter onefamily-desktop dev
 
 # The Chrome extension, built into apps/extension/dist (load it unpacked from chrome://extensions)
-pnpm --filter onelineage-extension build
+pnpm --filter onefamily-extension build
 
 # The made-up genealogy site the extension is tested against, on 127.0.0.1:8787
-pnpm --filter onelineage-extension mock-site
+pnpm --filter onefamily-extension mock-site
 
 # Chrome's native messaging host for a developer build you've trusted in the app. Writes two files in your
 # Library folder; add --dry-run to see them first
-pnpm --filter onelineage-desktop build:host
+pnpm --filter onefamily-desktop build:host
 node apps/desktop/host-dist/install-native-host.mjs --extension-id <id from chrome://extensions>
 
 # A made-up family with planted answers, written as Genealogy Assistant-style CSVs plus truth.json
-pnpm --filter @captiveorigins/onelineage-simulate simulate --seed 1 --out ../../fixtures/generated/planted-1
+pnpm --filter @extantape/onefamily-simulate simulate --seed 1 --out ../../fixtures/generated/planted-1
 ```
 
 The simulator's limits: crossovers have no interference, matches below 8 cM and segments below 7 cM are dropped, and there's no Timber-style weighting. Weighted and unweighted cM are therefore equal, and segment lengths come from a rounded genetic map. Every name and ID is invented.

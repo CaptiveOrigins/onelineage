@@ -30,10 +30,10 @@ describe('backup keys in the Keychain', () => {
   })
   it('keeps folder names out of the Keychain, and never passes a shell', async () => {
     const k = fakeKeychain()
-    await keychainStore(k.run).backupKey('/Users/someone/Family Research')
-    expect(JSON.stringify([...k.items.keys()])).not.toContain('Family')
+    await keychainStore(k.run).backupKey('/Volumes/Test/someone/Ancestor Notes')
+    expect(JSON.stringify([...k.items.keys()])).not.toContain('Ancestor')
     expect(k.calls[0]).toContain(KEYCHAIN_SERVICE)
-    expect(k.calls[0]).toContain(accountFor('/Users/someone/Family Research'))
+    expect(k.calls[0]).toContain(accountFor('/Volumes/Test/someone/Ancestor Notes'))
   })
   it('refuses to use a key it can’t read back', async () => {
     const run: SecurityRunner = async (args) => (args[0] === 'find-generic-password' ? { code: 44, stdout: '' } : { code: 0, stdout: '' })

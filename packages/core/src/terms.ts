@@ -1,5 +1,5 @@
 /**
- * The terms register (ADR 0004): what each service's terms allow OneLineage to do.
+ * The terms register (ADR 0004): what each service's terms allow OneFamily to do.
  *
  * One Markdown file per service in `terms/`, with a front-matter block the engine parses.
  * A capability is used only if its verdict is exactly "allowed". Anything else, a missing

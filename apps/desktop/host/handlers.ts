@@ -7,14 +7,14 @@ import { createHash } from 'node:crypto'
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { DatabaseSync } from 'node:sqlite'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
-import { BlindGate, compareKits, ONE_CM_PER_MB, sha256Hex, TermsRegister, type Unblinding } from '@captiveorigins/onelineage-core'
-import { clusterKit, type ClusterRun } from '@captiveorigins/onelineage-analysis'
-import { importCollectedPages, importGenealogyAssistant, importRawDna, type ImportResult, type RawImport } from '@captiveorigins/onelineage-connectors'
+import { BlindGate, compareKits, ONE_CM_PER_MB, sha256Hex, TermsRegister, type Unblinding } from '@extantape/onefamily-core'
+import { clusterKit, type ClusterRun } from '@extantape/onefamily-analysis'
+import { importCollectedPages, importGenealogyAssistant, importRawDna, type ImportResult, type RawImport } from '@extantape/onefamily-connectors'
 import {
   appendDecision, backupTo, backupVerdict, canLowerBypass, checkBackup, decisionsPath, initLibrary, isCloudSynced, listFiles, openLibrary,
   buildCache, cacheDigest, dueItems, dueMessage, readDecisions, storeExport, type BypassLevel, type Decision,
-} from '@captiveorigins/onelineage-library'
-import type { PedigreeDocument } from '@captiveorigins/onepedigree-core'
+} from '@extantape/onefamily-library'
+import type { PedigreeDocument } from '@extantape/onepedigree-core'
 import { withCandidateFathers, type TreePerson } from '../src/pedigree'
 import { createDemoLibrary, DEMO_NOTE } from './demo'
 import { createExtensionBridge, type ExtensionData } from './extension/bridge'
@@ -201,7 +201,7 @@ export function createHost(opts: {
         if (devs[i] === libDev) warnings.push('On the same disk as the library, so one failed disk would take both.')
         if (devs.some((x, j) => j !== i && x !== null && x === devs[i])) warnings.push('On the same disk as another backup destination.')
         const key = cloud ? await keys.backupKey(lib) : null
-        const mine = readdirSync(d).filter((n) => n.startsWith('OneLineage backup ')).sort().reverse()
+        const mine = readdirSync(d).filter((n) => n.startsWith('OneFamily backup ')).sort().reverse()
         for (const name of mine) {
           const folder = join(d, name)
           const manifest = join(folder, 'BACKUP-MANIFEST.sha256')
@@ -209,7 +209,7 @@ export function createHost(opts: {
           // Only copies of this library count: its library.json must be the one in the copy.
           if (!readFileSync(manifest, 'utf8').split('\n').some((l) => l === `${libHash}  library.json`)) continue
           const found = await checkBackup(folder, key ?? undefined)
-          if (found.length === 0) lastCheckedBackup = stampToIso(name.slice('OneLineage backup '.length))
+          if (found.length === 0) lastCheckedBackup = stampToIso(name.slice('OneFamily backup '.length))
           else problems.push(`The newest copy here failed its check: ${found[0]}`)
           break
         }
@@ -332,7 +332,7 @@ export function createHost(opts: {
       const s = state()
       if (s.demo && (dir === s.demo || inside(dir, s.demo))) throw new HostError('That’s the made-up demo library. Choose a folder of your own.')
       if (existsSync(dir) && readdirSync(dir).filter((n) => !n.startsWith('.')).length && !existsSync(join(dir, 'library.json')))
-        throw new HostError('That folder already has other files in it. Choose an empty folder, or one that’s already a OneLineage library.')
+        throw new HostError('That folder already has other files in it. Choose an empty folder, or one that’s already a OneFamily library.')
       initLibrary(dir, now())
       s.home = dir
       s.current = dir
@@ -562,7 +562,7 @@ export function createHost(opts: {
     },
 
     /**
-     * The GEDmatch checklist (OneLineage plan section 5c). The app never uploads. The person uploads on
+     * The GEDmatch checklist (OneFamily plan section 5c). The app never uploads. The person uploads on
      * GEDmatch's own page, then records the kit number and its privacy setting here. Records go in the
      * decisions log. A minor's kit needs its own confirmation, and opt-in to law-enforcement matching is flagged.
      */

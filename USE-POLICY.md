@@ -1,8 +1,8 @@
-# Who may use OneLineage
+# Who may use OneFamily
 
 **Status: draft, 2026-11-10.** This policy was decided by the owner. The wording below still needs a legal review before the first release.
 
-OneLineage is for people researching families: their own, or someone else's with that person's permission.
+OneFamily is for people researching families: their own, or someone else's with that person's permission.
 
 ## Allowed
 

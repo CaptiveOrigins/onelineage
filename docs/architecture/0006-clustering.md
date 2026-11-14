@@ -4,7 +4,7 @@ Status: accepted, 2026-11-10
 
 ## Context
 
-The first job of the analysis is to sort a kit's matches into family lines before any tree is read (ADR 0002). The method was first worked out in Python scripts kept privately, on top of `leidenalg`, `igraph` and `networkx`. OneLineage is TypeScript and runs on the user's Mac with no Python, so the method is ported to `@captiveorigins/onelineage-analysis`, with its own Leiden implementation.
+The first job of the analysis is to sort a kit's matches into family lines before any tree is read (ADR 0002). The method was first worked out in Python scripts kept privately, on top of `leidenalg`, `igraph` and `networkx`. OneFamily is TypeScript and runs on the user's Mac with no Python, so the method is ported to `@extantape/onefamily-analysis`, with its own Leiden implementation.
 
 ## Decision
 
